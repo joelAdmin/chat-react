@@ -1,0 +1,192 @@
+.App {
+    text-align: center;
+}
+
+.App-logo {
+    height: 40vmin;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.App-link {
+    color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/** load de carga ajax **/
+
+@keyframes ldio-rpinwye8j0b {
+    0% {
+        transform: rotate(0deg)
+    }
+    50% {
+        transform: rotate(180deg)
+    }
+    100% {
+        transform: rotate(360deg)
+    }
+}
+
+.ldio-rpinwye8j0b div {
+    position: absolute;
+    animation: ldio-rpinwye8j0b 1s linear infinite;
+    width: 160px;
+    height: 160px;
+    top: 20px;
+    left: 20px;
+    border-radius: 50%;
+    /*box-shadow: 0 4px 0 0 #e15b64;*/
+    box-shadow: 0 4px 0 0 #7269ef;
+    transform-origin: 80px 82px;
+}
+
+.loadingio-eclipse {
+    width: 200px;
+    height: 200px;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.ldio-rpinwye8j0b {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform: translateZ(0) scale(1);
+    backface-visibility: hidden;
+    transform-origin: 0 0;
+    /* see note above */
+}
+
+.ldio-rpinwye8j0b div {
+    box-sizing: content-box;
+}
+
+
+/** microfono**/
+
+.microphone {
+    /* margin-top: 50px;
+  margin-bottom: 50px;*/
+    border-radius: 100%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    margin: 0px auto;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 4px solid rgba(0, 0, 0, 0.3);
+    position: absolute;
+    /* position: relative;*/
+    overflow: hidden;
+    /* margin-top: 10px;*/
+    /*margin-bottom: 5px;*/
+}
+
+.microphone.active {
+    background-color: black;
+    border-color: black;
+}
+
+.microphone.active i {
+    color: red;
+}
+
+.microphone i {
+    color: gray;
+    font-size: 30px;
+    position: relative;
+    z-index: 1;
+}
+
+.microphone .decibel {
+    display: none;
+    background-color: white;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    height: 0px;
+}
+
+.microphone.active .decibel {
+    display: block;
+}
+
+.microphoneStop {
+    /* margin-top: 50px;
+  margin-bottom: 50px;*/
+    border-radius: 100%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    margin: 0px auto;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 4px solid rgba(0, 0, 0, 0.3);
+    position: absolute;
+    /* position: relative;*/
+    overflow: hidden;
+    /* margin-top: 10px;*/
+    /*margin-bottom: 5px;*/
+}
+
+.microphoneStop.active {
+    background-color: black;
+    border-color: black;
+}
+
+.microphoneStop.active i {
+    color: red;
+}
+
+.microphoneStop i {
+    color: gray;
+    font-size: 30px;
+    position: relative;
+    z-index: 1;
+}
+
+.microphoneStop .decibel {
+    display: none;
+    background-color: white;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    height: 0px;
+}
+
+.microphoneStop.active .decibel {
+    display: block;
+}
