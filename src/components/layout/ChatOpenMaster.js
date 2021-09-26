@@ -32,7 +32,7 @@ class ChatOpenMaster extends Component {
                         <h5 className="mb-3 px-3 font-size-16">Recientes MASTER</h5>
                         <div className="chat-message-list" data-simplebar>
                             <ul className="list-unstyled chat-list chat-user-list">
-                               <ListChatMaster auth={this.props.auth} />
+                               <ListChatMaster auth={this.props.auth} {...this.props} />
                             </ul>
                         </div>
 

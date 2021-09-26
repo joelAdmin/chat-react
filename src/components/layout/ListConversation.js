@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {HTML} from '../lib/Lib';
+import {random, IMG} from '../lib/Lib';
+
 class ListConversation extends Component{
 
     /*constructor(props){
@@ -16,10 +18,10 @@ class ListConversation extends Component{
 
     conversation=()=>{
         return (                        
-            <li key={this.props.values.mensaje_id} className={(this.props.values.receptor_id !== this.props.auth.usuario_id)?'right':''}>
+            <li key={random} className={(this.props.values.receptor_id !== this.props.auth.usuario_id)?'right':''}>
                 <div className="conversation-list">
                     <div className="chat-avatar">
-                        <img src={this.props.values.avatar_emisor} alt="" />
+                        <img src={(this.props.values.avatar_emisor !== null)?this.props.values.avatar_emisor:IMG} alt="avatar" />
                     </div>
 
                     <div className="user-chat-content">

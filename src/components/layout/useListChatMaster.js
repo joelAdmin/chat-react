@@ -3,16 +3,16 @@ import React, {useState, useEffect} from "react";
 import {IMG, TIMERMESSAGE} from '../lib/Lib';
 import getChatsM from '../helpers/ChatsM';
 import getSubChats from '../helpers/SubChatsM';
+import getConversations from '../helpers/Conversations';
+import {random} from '../lib/Lib';
 
 export default function useListChatMaster(props){
     const [chats, setChats] = useState([]);
     const [subchats, setSubchats] = useState([]);
-    //const [chatId, setChatId] = useState(false);
+    //const [userTo, setUserTo] = useState({});
 
     const subChat = (emisor_id)=>{
-        //console.log('acaba de hacer click .....');
         getSubChats(emisor_id).then((response)=>{
-            //console.log('response click:',response);
             setSubchats(response.result);
         }).catch((error)=>{
             console.log('error',error);
@@ -26,9 +26,69 @@ export default function useListChatMaster(props){
             console.log('error',error);
         });
     }
+    /*
+    const updateUserTo =(data)=>{ 
+        let user = {}
+        if(props.auth.usuario_id === data.emisor_id){
+            user = {
+                chat_id:data.chat_id,
+                    usuario_id:data.usuarioid_receptor,
+                        nombre:data.nombre_receptor,
+                                apellido: data.apellido_receptor,
+                                    avatar: data.avatar_receptor,
+                                        email: data.email_receptor,
+                                            conectado:data.conectado_receptor
+
+            }
+        }else{
+            user = {
+                chat_id:data.chat_id,
+                    usuario_id:data.usuarioid_emisor,
+                        nombre:data.nombre_emisor,
+                            apellido: data.apellido_emisor,
+                                avatar: data.avatar_emisor,
+                                    email: data.email_emisor,
+                                        conectado:data.conectado_emisor
+            }       
+        }
+        setUserTo(user);
+    }*/
+
 
     const conversation =(chat_id)=>{
-        alert(chat_id);
+        let user = {}
+        props.parent.conversationsCallback([]);
+        //updateUserTo([]);
+        getConversations(chat_id).then((response) => { 
+            console.log('response:', response.result[0]);
+            //updateUserTo(response.result[0]);
+            const data =  response.result[0];
+            if(props.auth.usuario_id === data.emisor_id){
+                user = {
+                    chat_id:data.chat_id,
+                        usuario_id:data.usuarioid_receptor,
+                            nombre:data.nombre_receptor,
+                                    apellido: data.apellido_receptor,
+                                        avatar: data.avatar_receptor,
+                                            email: data.email_receptor,
+                                                conectado:data.conectado_receptor
+    
+                }
+            }else{
+                user = {
+                    chat_id:data.chat_id,
+                        usuario_id:data.usuarioid_emisor,
+                            nombre:data.nombre_emisor,
+                                apellido: data.apellido_emisor,
+                                    avatar: data.avatar_emisor,
+                                        email: data.email_emisor,
+                                            conectado:data.conectado_emisor
+                }       
+            } 
+            props.parent.conversationsCallback(response.result, user);
+        }).catch((error) => {
+            console.log(error);
+        });
     }
 
     //useEffect(queryChats, [])
@@ -43,7 +103,7 @@ export default function useListChatMaster(props){
         {chats.length > 0 ?
             Object.values(chats).map((value, key) => {
                 return (
-                    <li key={key} className="unread">
+                    <li key={random + key} className="unread">
                         <a href={'#collapseExample_'+value.chat_id} data-toggle="collapse" onClick={()=>{subChat(value.emisor_id)}}  role="button" aria-expanded="false" aria-controls={'collapseExample_'+value.chat_id}  >
                             <div className="media">{/* away online offline */}
                                 <div className={value.conectado > 0 ? "chat-user-img online align-self-center mr-3" : "chat-user-img offline align-self-center mr-3"} >
@@ -71,7 +131,7 @@ export default function useListChatMaster(props){
                                     {subchats.length > 0 ?
                                         Object.values(subchats).map((subchatmaster, key2) => {
                                             return (
-                                                    <li key={key2} className="unread border p-1">
+                                                    <li key={random + key2} className="unread border p-1">
                                                         <a href="/#" onClick={()=>{conversation(subchatmaster.chat_id)}} className="p-1">
                                                             <div className="media">
                                                                 <div className="chat-user-img align-self-center mr-3">
@@ -89,7 +149,7 @@ export default function useListChatMaster(props){
                                                     </li>                                                    
                                                     )
                                         }):
-                                        <li>No sub</li>
+                                        <li key={random} >Cargando ...</li>
                                     }
                                 </ol>
                             </div>
@@ -97,7 +157,7 @@ export default function useListChatMaster(props){
                     </li>
                 )
             }) :
-            <li>Cargando ...</li>                                
+            <li key={random}>Cargando ...</li>                                
         }
     </div>);
 }

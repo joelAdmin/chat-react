@@ -26,9 +26,26 @@ export const validator =(responseErrors, classFrom)=>{
     }
 }
 
+export const random = () =>{
+    const min = 1;
+    const max = 10000;
+    const random = parseInt(min + (Math.random() * (max - min)));
+    return random;
+}
+
 //headers Autorization
 export const headers = {
     headers: {
+      accept: 'application/json',
+      Authorization: 'Bearer '+localStorage.getItem('token')
+    },
+    data: {},
+}
+
+//headers Autorization post
+export const headersPost = {
+    headers: {
+      method:'POST',
       accept: 'application/json',
       Authorization: 'Bearer '+localStorage.getItem('token')
     },

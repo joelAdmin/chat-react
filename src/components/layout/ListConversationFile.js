@@ -1,5 +1,6 @@
 import React from "react";
 import { Component } from "react";
+import {random, IMG} from '../lib/Lib';
 
 class ListConversationFile extends Component {
 
@@ -25,16 +26,16 @@ class ListConversationFile extends Component {
     }
 
     imagen =()=>{
-        return (<li key={this.props.values.mensaje_id} className={(this.props.values.receptor_id !== this.props.auth.usuario_id)?'right':''}>
+        return (<li key={random} className={(this.props.values.receptor_id !== this.props.auth.usuario_id)?'right':''}>
             <div className="conversation-list">
                 <div className="chat-avatar">
-                    <img src={this.props.values.avatar_emisor} alt="avatar"/>
+                    <img src={(this.props.values.avatar_emisor !== null)?this.props.values.avatar_emisor:IMG} alt="avatar"/>
                 </div>
                 <div className="user-chat-content">
                     <div className="ctext-wrap">
                         <div className="ctext-wrap-content">
                             <ul className="list-inline message-img  mb-0">                                            
-                                <li key={this.props.values.mensaje_id + 1}  className="list-inline-item message-img-list">
+                                <li key={random}  className="list-inline-item message-img-list">
                                     <div>
                                         <a className="popup-img d-inline-block m-1" href="/#" title="Project 1">
                                             <img src={JSON.parse(this.props.values.mensaje).path} alt="imagen" className="rounded border"/>
@@ -42,12 +43,12 @@ class ListConversationFile extends Component {
                                     </div>
                                     <div className="message-img-link">
                                         <ul className="list-inline mb-0">
-                                            <li key={this.props.values.mensaje_id + 3} className="list-inline-item">
+                                            <li key={random} className="list-inline-item">
                                                 <a href="/#">
                                                     <i className="ri-download-2-line"></i>
                                                 </a>
                                             </li>
-                                            <li key={this.props.values.mensaje_id + 2} className="list-inline-item dropdown">
+                                            <li key={random} className="list-inline-item dropdown">
                                                 <a className="dropdown-toggle" href="/#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <i className="ri-more-fill"></i>
                                                 </a>
@@ -85,7 +86,7 @@ class ListConversationFile extends Component {
 
     file =()=>{
         return (                        
-            <li key={this.props.values.mensaje_id} className={(this.props.values.receptor_id !== this.props.auth.usuario_id)?'right':''}>
+            <li key={random} className={(this.props.values.receptor_id !== this.props.auth.usuario_id)?'right':''}>
                 <div className="conversation-list">
                     <div className="chat-avatar">
                         <img src={this.props.values.avatar_emisor} alt="" />

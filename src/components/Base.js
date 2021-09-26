@@ -11,7 +11,8 @@ class Base extends Component
 		this.state = {
 			userAuth:[],
 			access:'',
-			conversations: []
+			conversations: [],
+			userTo:{}
 		}
 	}
 
@@ -21,7 +22,6 @@ class Base extends Component
 
 	userAuth = () =>{
 		getuserAuth().then(response => {
-			//console.log('userAuth:', response);
 			this.setState({userAuth:response.result, access:response.access});
 		});		   
 	}
@@ -33,8 +33,8 @@ class Base extends Component
 	}
 
 	/**** number */
-	conversationsCallback = (number)=>{
-		this.setState({conversations:number})
+	conversationsCallback = (getconversations, getuserto)=>{
+		this.setState({conversations:getconversations, userTo:getuserto})
 	}
 
 	modifyMessage= (data) => {
@@ -46,7 +46,7 @@ class Base extends Component
 	}
 	
 	conversation=()=>{
-		return (<Conversation auth={this.state.userAuth} message={this.state.message} conversations={this.state.conversations}></Conversation>);
+		return (<Conversation auth={this.state.userAuth} message={this.state.message} conversations={this.state.conversations} userTo={this.state.userTo}></Conversation>);
 	}
 	
 	render(){

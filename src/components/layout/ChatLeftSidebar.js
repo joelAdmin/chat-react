@@ -292,7 +292,7 @@ class ChatLeftSidebar extends Component{
                     {/* Start chats tab-pane */}
                     <div className="tab-pane fade show active" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">
                         {/* Start chats content */}
-                        {this.props.access === 'Mg==' ?  <ChatOpenUser parent={this.props} /> : <ChatOpenMaster auth={this.props.auth} />}                        
+                        {this.props.access === 'Mg==' ?  <ChatOpenUser parent={this.props} /> : <ChatOpenMaster parent={this.props} auth={this.props.auth} />}                        
                         {/* Start chats content */}
                     </div>
                     {/* End chats tab-pane */}
@@ -469,7 +469,7 @@ class ChatLeftSidebar extends Component{
                                         <li>
                                             <div className="media align-items-center">
                                                 <div className="media-body">
-                                                    <h5 className="font-size-14 m-0">Doris Brown</h5>
+                                                    <h5 className="font-size-14 m-0">Doris Brown ..</h5>
                                                 </div>
                         
                                                 <div className="dropdown">

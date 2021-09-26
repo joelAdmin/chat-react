@@ -8,7 +8,9 @@ class ChatOpenUser extends Component {
     constructor(props){
         super(props);
         this.state = ({
-            chats: []
+            chats: [],
+            auth:this.props.parent.auth,
+            userTo:{}
         });
     }
 
@@ -24,14 +26,49 @@ class ChatOpenUser extends Component {
         });
     }
 
+    updateUserTo =(data)=>{ 
+        if(this.state.auth.usuario_id === data.emisor_id){
+            let userTo = {
+                chat_id:data.chat_id,
+                    usuario_id:data.usuarioid_receptor,
+                        nombre:data.nombre_receptor,
+                                    apellido: data.apellido_receptor,
+                                        avatar: data.avatar_receptor,
+                                            email: data.email_receptor,
+                                                conectado:data.conectado_receptor
+
+            }
+           this.setState({
+                userTo:userTo
+           });
+        }else{
+            let userTo = {
+                chat_id:data.chat_id,
+                    usuario_id:data.usuarioid_emisor,
+                        nombre:data.nombre_emisor,
+                            apellido: data.apellido_emisor,
+                                avatar: data.avatar_emisor,
+                                    email: data.email_emisor,
+                                        conectado:data.conectado_emisor
+            }
+
+            this.setState({
+                userTo:userTo
+            });           
+        }
+
+        //console.log( this.state.userTo) 
+    }
+
     openConversation = (chat_id) =>{
-        this.props.parent.conversationsCallback([])
-        getConversations(chat_id).then((response) => {           
-            this.props.parent.conversationsCallback(response.result)
+        this.props.parent.conversationsCallback([]);
+        this.updateUserTo([]);
+        getConversations(chat_id).then((response) => { 
+            this.updateUserTo(response.result[0]);    
+            this.props.parent.conversationsCallback(response.result, this.state.userTo);
         }).catch((error) => {
             console.log(error);
         });
-       
     }
 
     componentDidMount(){
