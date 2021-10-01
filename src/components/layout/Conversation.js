@@ -91,22 +91,24 @@ class Conversation extends Component{
         const vrandom = random();
         event.preventDefault();
         const text = this.htmlText(vrandom, this.props.auth.avatar, this.state.form.mensaje);
-        $("#chat-conversation-list").append(text);
-        $('#new'+vrandom).toggle({height:1000});
-        $("#mensaje").val('');    
-        
-        //enviar menssaje
-        axios.post(API.urlApi+'sendMessage', this.state.form).then(response => {            
-            if(response.data.res){
-                console.log('go:', response.data);
-                //alert('mensaje enviado ..');
-            }else{
-                console.log('no:', response.data);
-                //alert('mensaje NO enviado ..');
-            }      
-        }).catch(error => {
-            console.log('Error 0001x Send form', error);
-        }); 
+        if( this.state.form.mensaje.length > 0){       
+            $("#chat-conversation-list").append(text);
+            $('#new'+vrandom).toggle({height:1000});
+            $("#mensaje").val('');    
+            
+            //enviar menssaje
+            axios.post(API.urlApi+'sendMessage', this.state.form).then(response => {            
+                if(response.data.res){
+                    console.log('go:', response.data);
+                    //alert('mensaje enviado ..');
+                }else{
+                    console.log('no:', response.data);
+                    //alert('mensaje NO enviado ..');
+                }      
+            }).catch(error => {
+                console.log('Error 0001x Send form', error);
+            }); 
+        }
     }
 
     conversation=()=>{ 

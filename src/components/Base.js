@@ -4,6 +4,10 @@ import ChatLeftSidebar from './layout/ChatLeftSidebar.js';
 import Conversation from './layout/Conversation.js';
 import getuserAuth from './helpers/UserAuth';
 
+//import axios from "axios";
+import Pusher from "pusher-js";
+import Echo from "laravel-echo";
+
 class Base extends Component
 {
 	constructor(props){
@@ -18,6 +22,7 @@ class Base extends Component
 
 	componentDidMount() {
 		this.userAuth()	
+		this.config()
 	}
 
 	userAuth = () =>{
@@ -47,6 +52,26 @@ class Base extends Component
 	
 	conversation=()=>{
 		return (<Conversation auth={this.state.userAuth} message={this.state.message} conversations={this.state.conversations} userTo={this.state.userTo}></Conversation>);
+	}
+
+	config =()=>{
+		//const Pusher = require('pusher-js');
+		const echo = new Echo({
+			broadcaster: "pusher",
+			key: "141105",
+			cluster: "mt1",
+			wsHost: 'wss.jlssystem.com',
+			wsPort: 6001,
+			wssPort: 6001,
+			forceTLS: false,
+			encrypted: true,
+			disableStats: true,
+			enabledTransports: ['wss', 'ws']
+		});
+
+		echo.channel('Message').listen('.NewMessageEvent', (data)=>{
+			alert('escuchado...');
+		});
 	}
 	
 	render(){
