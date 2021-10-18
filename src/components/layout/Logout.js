@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { Component, React } from "react";
 import axios from 'axios';
 import {headers, API} from '../lib/Lib';
 
@@ -20,9 +20,9 @@ class Logout extends Component{
 
     render(){
         return (
-            <>
+            <div>
                 <a className="dropdown-item" href="/#" onClick={this.logout}>Salir<i className="ri-logout-circle-r-line float-right text-muted"></i></a>
-            </>
+            </div>
         );
     }
 }

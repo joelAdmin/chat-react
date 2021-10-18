@@ -3,10 +3,8 @@ import SidebarMenu from './layout/SidebarMenu.js';
 import ChatLeftSidebar from './layout/ChatLeftSidebar.js';
 import Conversation from './layout/Conversation.js';
 import getuserAuth from './helpers/UserAuth';
+import {ECHO} from './lib/Lib';
 
-//import axios from "axios";
-import Pusher from "pusher-js";
-import Echo from "laravel-echo";
 
 class Base extends Component
 {
@@ -21,13 +19,22 @@ class Base extends Component
 	}
 
 	componentDidMount() {
-		this.userAuth()	
-		this.config()
+		this.userAuth();
+	}
+
+	componentDidUpdate(){
+	}
+
+	config =()=>{
+		ECHO.private(`new-message.${this.state.userAuth.usuario_id}`).listen('.NewMessage', (data)=>{
+			console.log('esto es un nuevo mensaje', data)
+		});
 	}
 
 	userAuth = () =>{
 		getuserAuth().then(response => {
 			this.setState({userAuth:response.result, access:response.access});
+			this.config();
 		});		   
 	}
 
@@ -54,29 +61,10 @@ class Base extends Component
 		return (<Conversation auth={this.state.userAuth} message={this.state.message} conversations={this.state.conversations} userTo={this.state.userTo}></Conversation>);
 	}
 
-	config =()=>{
-		//const Pusher = require('pusher-js');
-		const echo = new Echo({
-			broadcaster: "pusher",
-			key: "141105",
-			cluster: "mt1",
-			wsHost: 'wss.jlssystem.com',
-			wsPort: 6001,
-			wssPort: 6001,
-			forceTLS: false,
-			encrypted: true,
-			disableStats: true,
-			enabledTransports: ['wss', 'ws']
-		});
 
-		echo.channel('Message').listen('.NewMessageEvent', (data)=>{
-			alert('escuchado...');
-		});
-	}
-	
 	render(){
 		return (
-			<div className="layout-wrapper d-lg-flex">				
+			<div className="layout-wrapper d-lg-flex">u-{this.state.userAuth.usuario_id}				
 				{this.sidebarMenu()}				
 				{this.chatLeftSidebar()}
 				{this.conversation()}

@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 
-
+import PropTypes from 'prop-types';
 class Alert extends Component {
-   
+   constructor(props){
+       super(props)
+   }
     render(){
         return (
             <div className={'alert ' + this.props.theme + ' alert-dismissible fade show'} role="alert">
@@ -14,4 +16,10 @@ class Alert extends Component {
         );
     }
 }
+
+Component.propTypes = {
+    a: PropTypes.any,
+    r: PropTypes.array,
+    o: PropTypes.object
+  };
 export default Alert;

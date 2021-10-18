@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import ListConversation from './ListConversation.js';
 import ListConversationFile from './ListConversationFile.js';
-import {IMG, random, API} from '../lib/Lib';
+import {IMG, random, API, headers} from '../lib/Lib';
 import axios from 'axios';
 
 import $ from 'jquery';
@@ -97,7 +97,7 @@ class Conversation extends Component{
             $("#mensaje").val('');    
             
             //enviar menssaje
-            axios.post(API.urlApi+'sendMessage', this.state.form).then(response => {            
+            axios.post(API.urlApi+'sendMessage', this.state.form, headers).then(response => {            
                 if(response.data.res){
                     console.log('go:', response.data);
                     //alert('mensaje enviado ..');

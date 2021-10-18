@@ -6,16 +6,20 @@ import {validator, API} from './lib/Lib';
 
 class Login extends Component {
 
-    state = ({
-        form:{
-            email:'',
-            password:''
-        },
-        error:false,
-        errorMessage:'',
-        title:'',
-        theme:'alert-danger'
-    });
+    constructor(){
+        super();
+        this.state = ({
+            form:{
+                email:'',
+                password:''
+            },
+            error:false,
+            errorMessage:'',
+            title:'',
+            theme:'alert-danger'
+        });
+    }
+    
 
     handleChange = async (event) =>{
         await this.setState({
@@ -116,7 +120,7 @@ class Login extends Component {
                                         <a href="/#" className="ml-auto mb-0 text-sm">Forgot Password?</a>
                                     </div>
                                     <div className="row mb-3 px-3"> <button type="submit" className="btn btn-blue text-center">Login</button> </div>
-                                    <div className="row mb-4 px-3"> <small className="font-weight-bold">Don't have an account? <a href="/#" className="text-danger ">Register</a></small> </div>
+                                    <div className="row mb-4 px-3"> <small className="font-weight-bold">Dont have an account? <a href="/#" className="text-danger ">Register</a></small> </div>
                                 </form>
                             </div>
                         </div>

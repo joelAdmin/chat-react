@@ -1,3 +1,7 @@
+import React, { Component }  from 'react';
+import Pusher from "pusher-js";
+import Echo from "laravel-echo";
+
 export const validator =(responseErrors, classFrom)=>{
     const forms = document.querySelectorAll(classFrom);
     const form  = forms[0];
@@ -25,6 +29,28 @@ export const validator =(responseErrors, classFrom)=>{
         });                    
     }
 }
+
+export const ECHO = new Echo({
+    broadcaster: "pusher",    
+    key: "141115",
+    cluster: 'mt1',
+    //authEndpoint: "Access-Control-Allow-Origin: https://wss.jlssystem.com/api/broadcasting/auth",
+    //authEndpoint: "Access-Control-Allow-Origin: http://localhost:8001/api/broadcasting/auth",
+    authEndpoint: "https://api-alp.jlssystem.com/api/broadcasting/auth",
+    wsHost: 'wss.jlssystem.com',
+    wsPort: 6001,
+    wssPort: 6001,
+    forceTLS: true,
+    encrypted: true,
+    disableStats: true,
+    enabledTransports: ['wss', 'ws'],
+    auth: {
+        headers: {
+           Authorization: "Bearer " + localStorage.getItem('token'),
+           Accept: 'application/json',
+        }
+    },
+})
 
 export const random = () =>{
     const min = 1;
@@ -54,8 +80,8 @@ export const headersPost = {
 
 //config API
 export const API = {
-    urlApi:'http://127.0.0.1:8001/api/',
-    urlSocket:'http://127.0.0.1:8001',
+    urlApi:'https://api-alp.jlssystem.com/api/',
+    urlSocket:'https://api-alp.jlssystem.com',
     title:'API REST JL®',
     toke:localStorage.getItem('token')
 }
