@@ -15,7 +15,6 @@ class App extends Component{
 
   }
   
-
   app =()=> {
     
     return (<Base params={this.props}></Base>);

@@ -1,12 +1,7 @@
-import React, {Component} from 'react';
-import {HTML} from '../lib/Lib';
+import React, {Component} from "react";
 import {random, IMG} from '../lib/Lib';
 
-class ListConversation extends Component{
-
-    /*constructor(props){
-        super(props);
-    }*/
+class ListConversationAudio extends Component {
 
     componentDidMount(){
       
@@ -28,7 +23,7 @@ class ListConversation extends Component{
                         <div className="ctext-wrap">
                             <div className="ctext-wrap-content">
                                 <div className="mb-0"><p></p>
-                                {HTML(this.props.values.mensaje)}
+                                    <audio key={random} controls><track kind="captions"></track>  <source src={this.props.values.ogg} type="audio/wav"/> </audio>
                                 </div>
                                 <p className="chat-time mb-0">
                                     <i className="ri-time-line align-middle"></i> 
@@ -58,5 +53,7 @@ class ListConversation extends Component{
     render(){
         return(this.conversation());
     }
+
 }
-export default ListConversation;
+
+export default ListConversationAudio;

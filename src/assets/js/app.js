@@ -8,5 +8,6 @@ $(function(a) {
         a('[data-toggle="popover"]').popover()
     }), a("#light-dark").on("click", function(t) {
         "disabled" !== a("#bootstrap-style").attr("disabled") ? (a("#bootstrap-dark-style").attr("disabled", !1), a("#bootstrap-style").attr("disabled", !0), a("#app-dark-style").attr("disabled", !1), a("#app-style").attr("disabled", !0)) : (a("#bootstrap-dark-style").attr("disabled", !0), a("#bootstrap-style").attr("disabled", !1), a("#app-dark-style").attr("disabled", !0), a("#app-style").attr("disabled", !1))
-    }), Waves.init()
+    }), Waves.init();
+
 }(jQuery));

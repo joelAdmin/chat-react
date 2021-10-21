@@ -61,12 +61,15 @@ class ChatOpenUser extends Component {
     }
 
     openConversation = (chat_id) =>{
+        this.props.parent.openchatCallback(true, chat_id);
         this.props.parent.conversationsCallback([]);
         this.updateUserTo([]);
-        getConversations(chat_id).then((response) => { 
-            this.updateUserTo(response.result[0]);    
-            this.props.parent.conversationsCallback(response.result, this.state.userTo);
-        }).catch((error) => {
+        axios.get(API.urlApi+'getMessage/'+chat_id, headers).then(response =>{
+            //console.log(response.data.result) ; 
+            this.updateUserTo(response.data.result[0]); 
+            //console.log('userTo', this.state.userTo);   
+            this.props.parent.conversationsCallback(response.data.result, this.state.userTo);
+        }).catch(error =>{
             console.log(error);
         });
     }

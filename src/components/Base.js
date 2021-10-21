@@ -3,7 +3,9 @@ import SidebarMenu from './layout/SidebarMenu.js';
 import ChatLeftSidebar from './layout/ChatLeftSidebar.js';
 import Conversation from './layout/Conversation.js';
 import getuserAuth from './helpers/UserAuth';
-import {ECHO} from './lib/Lib';
+import getConversations from './helpers/Conversations';
+import {ECHO, API, headers} from './lib/Lib';
+import axios from 'axios';
 
 
 class Base extends Component
@@ -14,7 +16,15 @@ class Base extends Component
 			userAuth:[],
 			access:'',
 			conversations: [],
-			userTo:{}
+			userTo:{}, 
+			openchat:false,
+			openchat_id:0,
+			chatopen:{
+				open:false,
+				chat_id:0,
+				emisor_id:0,
+				receptor_id:0
+			}
 		}
 	}
 
@@ -23,11 +33,24 @@ class Base extends Component
 	}
 
 	componentDidUpdate(){
+		//this.userAuth();
 	}
 
 	config =()=>{
 		ECHO.private(`new-message.${this.state.userAuth.usuario_id}`).listen('.NewMessage', (data)=>{
-			console.log('esto es un nuevo mensaje', data)
+			/**
+			 * varificar si hay chat o coversaciones abiertas ---> si las hay solo atualizo las conversaciones
+			 * sino solo actualizo la lista de mensaje sin leer
+			 */
+			console.log('channel new message', data);
+			if(this.state.chatopen.open === true && parseInt(data.chat_id) === parseInt(this.state.chatopen.chat_id)){
+				axios.get(API.urlApi+'getMessage/'+data.chat_id, headers).then(response =>{
+					console.log('Actualizando conversation', response.data.result) ; 
+					this.conversationsCallback(response.data.result, data.user_emisor);
+				}).catch(error =>{
+					console.log(error);
+				});
+			}
 		});
 	}
 
@@ -38,33 +61,44 @@ class Base extends Component
 		});		   
 	}
 
+	/**** number */
+	conversationsCallback = (getconversations, getuserto) => {
+		this.setState({conversations:getconversations, userTo:getuserto})
+	}
+
+	openchatCallback = (data, chat_id) =>{
+		this.setState({
+			chatopen:{
+				open:data,
+				chat_id:chat_id,
+				emisor_id:this.state.userAuth.usuario_id,
+				receptor_id:0,
+			}
+		})
+	}
+
+	modifyMessage= (data) => {
+		this.setState({message: data})
+	}
+
 	sidebarMenu=()=>{		
 		if(this.state.userAuth !== ''){
 			return (<SidebarMenu auth={this.state.userAuth}></SidebarMenu>); 
 		}   	
 	}
-
-	/**** number */
-	conversationsCallback = (getconversations, getuserto)=>{
-		this.setState({conversations:getconversations, userTo:getuserto})
-	}
-
-	modifyMessage= (data) => {
-			this.setState({message: data})
-	}
 	
 	chatLeftSidebar=()=>{
-		return (<ChatLeftSidebar auth={this.state.userAuth} access={this.state.access}  conversationsCallback={this.conversationsCallback}></ChatLeftSidebar>);
+		return (<ChatLeftSidebar auth={this.state.userAuth} access={this.state.access} openchatCallback={this.openchatCallback}  conversationsCallback={this.conversationsCallback}></ChatLeftSidebar>);
 	}
 	
 	conversation=()=>{
-		return (<Conversation auth={this.state.userAuth} message={this.state.message} conversations={this.state.conversations} userTo={this.state.userTo}></Conversation>);
+		return (<Conversation parent={this.state}  conversations={this.state.conversations} userTo={this.state.userTo}></Conversation>);
 	}
 
 
 	render(){
 		return (
-			<div className="layout-wrapper d-lg-flex">u-{this.state.userAuth.usuario_id}				
+			<div className="layout-wrapper d-lg-flex">				
 				{this.sidebarMenu()}				
 				{this.chatLeftSidebar()}
 				{this.conversation()}

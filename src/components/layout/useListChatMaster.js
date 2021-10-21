@@ -57,10 +57,11 @@ export default function useListChatMaster(props){
 
     const conversation =(chat_id)=>{
         let user = {}
+        props.parent.openchatCallback(true, chat_id);
         props.parent.conversationsCallback([]);
         //updateUserTo([]);
         getConversations(chat_id).then((response) => { 
-            console.log('response:', response.result[0]);
+            //console.log('response:', response.result[0]);
             //updateUserTo(response.result[0]);
             const data =  response.result[0];
             if(props.auth.usuario_id === data.emisor_id){

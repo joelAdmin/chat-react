@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import ListConversation from './ListConversation.js';
 import ListConversationFile from './ListConversationFile.js';
+import ListConversationAudio from './ListConversationAudio.js';
+import BtnSendAudio from './BtnSendAudio.js';
 import {IMG, random, API, headers} from '../lib/Lib';
 import axios from 'axios';
 
@@ -13,49 +15,68 @@ class Conversation extends Component{
         this.state = {
             form:{
                 mensaje:'',
-                emisor_id:'',
-                receptor_id:'',
-                chat_id:''
+                emisor_id: 0,
+                receptor_id:0,
+                chat_id:0
             }
         };
+        
+       // this.updatehidden();
     }
 
     componentDidMount(){
-        document.getElementById('loading').innerHTML='';
+        this.loading();
+    }
+
+    loading =()=>{
+        if(this.props.parent.chatopen.open === true){
+            document.getElementById('loading').innerHTML='';
+        }
     }
 
     componentDidUpdate(){
-        this.topScroll();
-        console.log('props:', this.props);
+        this.topScroll(true);
+        //this.updatehidden();
+        
+        //console.log('constructor', Object(this.props.userTo).usuario_id);
+        //console.log('props:', this.props);
     }
 
-    topScroll =()=>{
-        if(this.props.conversations.length > 0){
-            setTimeout(function(){
-                var scroll = document.querySelector('#chat-conversation .simplebar-content-wrapper');
-                $('#chat-conversation .simplebar-content-wrapper').animate( {scrollTop : scroll.scrollHeight}, 900 );
-            }, 300);
-        }
+    topScroll =(validate)=>{
+        
+        if(validate === true){
+            if(this.props.parent.chatopen.open === true){
+                if(this.props.conversations.length > 0){
+                    setTimeout(function(){
+                        var scroll = document.querySelector('#chat-conversation .simplebar-content-wrapper');
+                        $('#chat-conversation .simplebar-content-wrapper').animate( {scrollTop : scroll.scrollHeight}, 900 );
+                    }, 300);
+                }
+            }
+        }else{
+            if(this.props.conversations.length > 0){
+                setTimeout(function(){
+                    var scroll = document.querySelector('#chat-conversation .simplebar-content-wrapper');
+                    $('#chat-conversation .simplebar-content-wrapper').animate( {scrollTop : scroll.scrollHeight}, 900 );
+                }, 300);
+            }
+        }        
     }
 
     showProfile =()=>{
         $('.user-profile-sidebar').show();
     }
 
-    handleSendMessage = async(e)=>{
-       /* await this.setState({
-            form:{...this.state.form, [e.target.name]:e.target.value}
-        });*/
-
-        //onsole.log(this.props.auth.usuario_id);
-        this.setState({
+    handleSendMessage = (e)=>{
+       this.setState({
             form:{
-                emisor_id:this.props.auth.usuario_id,
-                receptor_id:Object(this.props.userTo).usuario_id,
-                chat_id:Object(this.props.userTo).chat_id,
+                emisor_id:this.props.parent.chatopen.emisor_id,
+                receptor_id:Object(this.props.parent.userTo).usuario_id,
+                chat_id:this.props.parent.chatopen.chat_id,
                 [e.target.name]:e.target.value
             }
         });
+        ///console.log('form:', this.state.form);
     }
 
     htmlText =(vrandom,avatar, text)=>{
@@ -90,7 +111,11 @@ class Conversation extends Component{
     handleSubmit = (event) => {
         const vrandom = random();
         event.preventDefault();
-        const text = this.htmlText(vrandom, this.props.auth.avatar, this.state.form.mensaje);
+        const text = this.htmlText(vrandom, this.props.parent.userAuth.avatar, this.state.form.mensaje);
+     
+        console.log('datos ha enviar', this.state.form);
+        console.log('datos ha enviar chat_id', this.state.form.chat_id);
+
         if( this.state.form.mensaje.length > 0){       
             $("#chat-conversation-list").append(text);
             $('#new'+vrandom).toggle({height:1000});
@@ -115,9 +140,10 @@ class Conversation extends Component{
         return (            
             <div className="user-chat w-100">
                 <div className="d-lg-flex">
+                    {this.props.parent.chatopen.open===true &&
+                    <>
                     {/* start chat conversation section */}
                     <div className="w-100">
-                        
                         <div className="p-3 p-lg-4 border-bottom">   
                         {this.props.conversations.length > 0 &&                    
                             <div className="row align-items-center">
@@ -131,7 +157,7 @@ class Conversation extends Component{
                                                 <img src={(Object(this.props.userTo).avatar !== null) ? Object(this.props.userTo).avatar : IMG} className="rounded-circle avatar-xs" alt="" />
                                             }                                            
                                         </div>
-                                        <div className="media-body overflow-hidden">
+                                        <div className="media-body overflow-hidden">{this.props.parent.openchat===true && <b>gggggg</b>}
                                             <h5 className="font-size-16 mb-0 text-truncate"><a href="/#" onClick={this.showProfile} className="text-reset user-profile-show">{Object(this.props.userTo).nombre} {Object(this.props.userTo).apellido}</a> <i className="ri-record-circle-fill font-size-10 text-success d-inline-block ml-1"></i></h5>
                                         </div>
                                     </div>
@@ -177,7 +203,7 @@ class Conversation extends Component{
                         {/* end chat user head */}
 
                         {/* start chat conversation */}
-                        {this.props.conversations.length > 0 &&
+                        {(this.props.conversations.length > 0 ) &&
                             <div id="chat-conversation" className="chat-conversation p-3 p-lg-4" data-simplebar="init">
                                 <ul id="chat-conversation-list" className="list-unstyled mb-0">  
                                      {Object.values(this.props.conversations).map((values, key) => {
@@ -188,7 +214,7 @@ class Conversation extends Component{
                                                 return <ListConversationFile key={key} values={values} {...this.props} />
                                             }
                                         }else{
-                                            return <audio key={key} controls><track kind="captions"></track>  <source src={values.ogg} type="audio/wav"/> </audio>                                                                                           
+                                            return <ListConversationAudio  key={key} values={values} {...this.props} />                                                                                          
                                         }
                                     } )}
                                 </ul>
@@ -214,41 +240,7 @@ class Conversation extends Component{
 
                         {/* start chat input section */}
                         {this.props.conversations.length > 0 &&
-                        <form onSubmit={this.handleSubmit}>
-                            <div className="p-3 p-lg-4 border-top mb-0">                        
-                                <div className="row no-gutters">                                    
-                                    <div className="col">
-                                        <div>
-                                            <input type="hidden" name="emisor_id" id="emisor_id" />
-                                            <input type="hidden" name="receptor_id" id="receptor_id" />                                            
-                                            <input type="hidden" name="chat_id" id="chat_id" />
-                                            <input type="text" name="mensaje" id="mensaje" className="form-control form-control-lg bg-light border-light" onChange={this.handleSendMessage} placeholder="Enter Message..."/>
-                                        </div>
-                                    </div>
-                                    <div className="col-auto">
-                                        <div className="chat-input-links ml-md-2">
-                                            <ul className="list-inline mb-0">
-                                                    <li key="1" className="list-inline-item">
-                                                        <button type="button" className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect" data-toggle="tooltip" data-placement="top" title="Emoji">
-                                                            <i className="ri-emotion-happy-line"></i>
-                                                        </button>
-                                                    </li>
-                                                    <li key="2" className="list-inline-item">  
-                                                        <button type="button" className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect" data-toggle="tooltip" data-placement="top" title="Attached File">
-                                                            <i className="ri-attachment-line"></i>
-                                                        </button>
-                                                    </li>
-                                                    <li key="3" className="list-inline-item">
-                                                        <button type="submit" onSubmit={this.handleSubmit} className="btn btn-primary font-size-16 btn-lg chat-send waves-effect waves-light">
-                                                            <i className="ri-send-plane-2-fill"></i>
-                                                        </button>
-                                                    </li>
-                                            </ul>
-                                        </div>                                    
-                                    </div>                                
-                                </div>                        
-                            </div>
-                        </form>
+                            <BtnSendAudio callbackHandleSubmit={this.handleSubmit} callbackHandleSendMessage={this.handleSendMessage} />
                         }
                         {/* end chat input section */}
                     </div>
@@ -328,6 +320,8 @@ class Conversation extends Component{
                         {/* end user-profile-desc */}
                     </div>
                     {/* end User profile detail sidebar */}
+                    </>
+                    }
                 </div>
             </div>
         );

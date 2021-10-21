@@ -26,7 +26,7 @@ class ListConversationFile extends Component {
     }
 
     imagen =()=>{
-        return (<li key={random} className={(this.props.values.receptor_id !== this.props.auth.usuario_id)?'right':''}>
+        return (<li key={random} className={(this.props.values.receptor_id !== this.props.parent.chatopen.emisor_id)?'right':''}>
             <div className="conversation-list">
                 <div className="chat-avatar">
                     <img src={(this.props.values.avatar_emisor !== null)?this.props.values.avatar_emisor:IMG} alt="avatar"/>
@@ -86,7 +86,7 @@ class ListConversationFile extends Component {
 
     file =()=>{
         return (                        
-            <li key={random} className={(this.props.values.receptor_id !== this.props.auth.usuario_id)?'right':''}>
+            <li key={random} className={(this.props.values.receptor_id !== this.props.parent.chatopen.emisor_id)?'right':''}>
                 <div className="conversation-list">
                     <div className="chat-avatar">
                         <img src={this.props.values.avatar_emisor} alt="" />
