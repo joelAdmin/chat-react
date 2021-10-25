@@ -1,20 +1,32 @@
 import React, {Component} from "react";
 import '../../assets/css/microfono.css';
 import $ from 'jquery';
+import axios from "axios";
+import {API, headers} from '../lib/Lib';
 
 class BtnSendAudio extends Component {
 
     constructor(props){
-        super(props);
+        super(props); 
+        this.state = {
+            form:{
+                mensaje:'',
+                emisor_id: 0,
+                receptor_id:0,
+                chat_id:0,
+                ogg:''
+            }
+        }
+        this.props.callbackHandleSendMessageAudio();   
     }
 
     componentDidMount(){
         this.efectoJquery();
-        this.grabador();              
+        this.grabador();  
     }
 
     componentDidUpdate(){
-
+    
     }
 
     efectoJquery =()=>{
@@ -49,6 +61,22 @@ class BtnSendAudio extends Component {
         return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
     }
 
+    updateRequestAudio =(ogg)=>{
+        const form = this.props.parent.form;
+        this.props.callbackHandleSendMessageAudio();
+
+        this.setState({
+            form:{
+                mensaje:form.mensaje,
+                emisor_id: form.emisor_id,
+                receptor_id:form.receptor_id,
+                chat_id:form.chat_id,
+                ogg:ogg
+            }
+        })
+        console.log('this.state.form',this.state.form);
+    }
+
     
     grabador =()=> {
         const selector_star = document.querySelector(".microphone");
@@ -66,10 +94,12 @@ class BtnSendAudio extends Component {
         var timer;
         var connection = {};
         var connect = false;
-        var microphonebar = document.getElementById("microphoneStopbar");
-
+        var microphonebar = document.getElementById("microphoneStopbar");   
+        const thas = this;   
+       
         $('.microphone').on("click", function() {
             console.log('realizo un click');
+           
             clicked = true;
             if(!!navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
                 console.log('ejecuntandose');
@@ -87,9 +117,11 @@ class BtnSendAudio extends Component {
                         * con module.exports = n.WebAudioRecorder  al final para poder exportar el modulo 
                         * con  const WebAudioRecorder = require('../../assets/js/simple-web/js/WebAudioRecorder.min.js');
                         */
-                    const WebAudioRecorder = require('../../assets/js/simple-web/js/WebAudioRecorder.min.js');
+                    const WebAudioRecorder = require('../../assets/js/simple-weba/js/WebAudioRecorder.min.js');
+                    /** esta faltando solucionar el problema de las doscarpetas simple-weba y simple-webe */
+                    
                     recorder = new WebAudioRecorder(input, {
-                        workerDir: "../../assets/js/simple-web/js/", 
+                        workerDir: "assets/js/simple-webe/js/", 
                         encoding: encodingType,
                         numChannels: 2, 
                         onEncoderLoading: function(recorder, encoding) {},
@@ -102,9 +134,17 @@ class BtnSendAudio extends Component {
                         reader.readAsDataURL(blob);
                         reader.onloadend = function() {
                             base64data = reader.result;
-                            console.log('base64data', base64data);
-                            //var userTo = $('#userTo').val();
-                            //window.livewire.emit('sendAudio', base64data, userTo, blob.size, blob.type);
+                            thas.updateRequestAudio(base64data);
+                            //console.log('form_',thas.state.form);                            
+                            axios.post(API.urlApi+'sendMessageAudio', thas.state.form, headers).then(response => {            
+                                if(response.data.res){
+                                    console.log('go:', response.data);
+                                }else{
+                                    console.log('no:', response.data);
+                                }      
+                            }).catch(error => {
+                                console.log('Error 0001x Send form', error);
+                            });
                         }
                         console.log('blob', blob.size);
                         
@@ -168,10 +208,8 @@ class BtnSendAudio extends Component {
         });
     }
 
-    preRender =()=>{
+    preRender =()=>{ 
         return (<>
-        {/*<ScriptTag isHydrating={true} type="text/javascript" src="../../assets/js/simple-web/js/WebAudioRecorder.min.js" />*/}
-        
             <form onSubmit={this.props.callbackHandleSubmit}>
                 <div className="p-3 p-lg-4 border-top mb-0">                        
                     <div className="row no-gutters">                                    

@@ -1,28 +1,17 @@
 import React, {Component} from "react";
 import axios from "axios";
 import {API, IMG, TIMERMESSAGE, headers} from '../lib/Lib';
-import getConversations from '../helpers/Conversations'
+//import getConversations from '../helpers/Conversations'
+import getChatsU from '../helpers/ChatsU';
 
 class ChatOpenUser extends Component {
 
     constructor(props){
         super(props);
         this.state = ({
-            chats: [],
+            chats: this.props.parent.getChatsU,
             auth:this.props.parent.auth,
             userTo:{}
-        });
-    }
-
-    chats = () => {
-        axios.get(API.urlApi+'chatsAuthU/'+this.props.parent.auth.usuario_id, headers).then(response =>{
-            if(Object.values(response.data.result).length > 0){
-                this.setState({chats:response.data.result});               
-            }else{
-                console.log('no hay chats');
-            }           
-        }).catch(error =>{
-            console.log('error 00010x query chats user');
         });
     }
 
@@ -65,9 +54,7 @@ class ChatOpenUser extends Component {
         this.props.parent.conversationsCallback([]);
         this.updateUserTo([]);
         axios.get(API.urlApi+'getMessage/'+chat_id, headers).then(response =>{
-            //console.log(response.data.result) ; 
-            this.updateUserTo(response.data.result[0]); 
-            //console.log('userTo', this.state.userTo);   
+            this.updateUserTo(response.data.result[0]);  
             this.props.parent.conversationsCallback(response.data.result, this.state.userTo);
         }).catch(error =>{
             console.log(error);
@@ -75,7 +62,10 @@ class ChatOpenUser extends Component {
     }
 
     componentDidMount(){
-        this.chats();
+    }
+
+    componentDidUpdate(){
+    
     }
 
     render(){
@@ -105,8 +95,8 @@ class ChatOpenUser extends Component {
                         <h5 className="mb-3 px-3 font-size-16">Recientes {this.props.parent.conversations} {this.props.parent.auth.usuario_id}</h5>
                         <div className="chat-message-list" data-simplebar>
                             <ul className="list-unstyled chat-list chat-user-list">
-                                {this.state.chats.length > 0 ?
-                                    Object.values(this.state.chats).map((value, key) => {
+                                {this.props.parent.getChatsU.length > 0 ?
+                                    Object.values(this.props.parent.getChatsU).map((value, key) => {
                                         return (
                                             <li key={key} className="unread">
                                                 <a href="/#" onClick={()=>{this.openConversation(value.chat_id)}} >

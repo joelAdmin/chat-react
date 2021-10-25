@@ -76,8 +76,20 @@ class Conversation extends Component{
                 [e.target.name]:e.target.value
             }
         });
-        ///console.log('form:', this.state.form);
+        console.log('form:', this.state.form);
     }
+
+    handleSendMessageAudio = ()=>{
+        this.setState({
+             form:{
+                 emisor_id:this.props.parent.chatopen.emisor_id,
+                 receptor_id:Object(this.props.parent.userTo).usuario_id,
+                 chat_id:this.props.parent.chatopen.chat_id,
+                 mensaje:''
+             }
+         });
+         ///console.log('form:', this.state.form);
+     }
 
     htmlText =(vrandom,avatar, text)=>{
         const texto   =  '<li id="new'+vrandom+'" class="right" style="list-style:none; display:none;">'+
@@ -240,7 +252,7 @@ class Conversation extends Component{
 
                         {/* start chat input section */}
                         {this.props.conversations.length > 0 &&
-                            <BtnSendAudio callbackHandleSubmit={this.handleSubmit} callbackHandleSendMessage={this.handleSendMessage} />
+                            <BtnSendAudio callbackHandleSubmit={this.handleSubmit} callbackHandleSendMessage={this.handleSendMessage} callbackHandleSendMessageAudio={this.handleSendMessageAudio} parent={this.state} />
                         }
                         {/* end chat input section */}
                     </div>

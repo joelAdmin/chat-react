@@ -10,8 +10,9 @@ export default function useListChatMaster(props){
     const [chats, setChats] = useState([]);
     const [subchats, setSubchats] = useState([]);
     //const [userTo, setUserTo] = useState({});
-
-    const subChat = (emisor_id)=>{
+    
+    const subChat = (emisor_id) => {
+        setSubchats({});
         getSubChats(emisor_id).then((response)=>{
             setSubchats(response.result);
         }).catch((error)=>{
@@ -19,50 +20,44 @@ export default function useListChatMaster(props){
         });
     }
 
-    const queryChats =()=>{
-        getChatsM().then((response)=>{
-            setChats(response.result);
+    const subChatAuto = (emisor_id) => {
+        getSubChats(emisor_id).then((response)=>{
+            setSubchats(response.result);
         }).catch((error)=>{
             console.log('error',error);
         });
     }
-    /*
-    const updateUserTo =(data)=>{ 
-        let user = {}
-        if(props.auth.usuario_id === data.emisor_id){
-            user = {
-                chat_id:data.chat_id,
-                    usuario_id:data.usuarioid_receptor,
-                        nombre:data.nombre_receptor,
-                                apellido: data.apellido_receptor,
-                                    avatar: data.avatar_receptor,
-                                        email: data.email_receptor,
-                                            conectado:data.conectado_receptor
 
+    const queryChats = () => {       
+        if(props.parent.getChatsM.length > 0){
+            console.log('master get', props.parent.getChatsM);
+            setChats(props.parent.getChatsM);
+            if(chats.length > 0){
+                subChatAuto(chats[0].emisor_id);
             }
-        }else{
-            user = {
-                chat_id:data.chat_id,
-                    usuario_id:data.usuarioid_emisor,
-                        nombre:data.nombre_emisor,
-                            apellido: data.apellido_emisor,
-                                avatar: data.avatar_emisor,
-                                    email: data.email_emisor,
-                                        conectado:data.conectado_emisor
-            }       
         }
-        setUserTo(user);
-    }*/
-
-
+        
+        /*
+        if(props.parent.getChatsM.length > 0){
+            setChats(props.parent.getChatsM);
+            console.log('emisor_id:>',chats[0].emisor_id);
+            subChatAuto(chats[0].emisor_id);
+        }else{
+            getChatsM().then((response)=>{
+                setChats(response.result);
+                console.log('emisor_id:',chats[0].emisor_id);
+            }).catch((error)=>{
+                console.log('error',error);
+            });
+            setChats(props.parent.getChatsM);
+        }*/
+    }
+    
     const conversation =(chat_id)=>{
         let user = {}
         props.parent.openchatCallback(true, chat_id);
         props.parent.conversationsCallback([]);
-        //updateUserTo([]);
         getConversations(chat_id).then((response) => { 
-            //console.log('response:', response.result[0]);
-            //updateUserTo(response.result[0]);
             const data =  response.result[0];
             if(props.auth.usuario_id === data.emisor_id){
                 user = {
@@ -92,13 +87,17 @@ export default function useListChatMaster(props){
         });
     }
 
-    //useEffect(queryChats, [])
+    /*useEffect(()=>{
+        console.log('emisor_id',chats);
+        subChatAuto(chats[0].emisor_id);
+    }, []);*/
+
     useEffect(() => {
         queryChats();
-        return () => {
+        /*return () => {
             setSubchats({}); //retorno vacio para cuando entre por usuarios 
-          };
-    }, []);
+        };*/
+    }, [props.parent.getChatsM]);
 
     return (<div id="accordion">
         {chats.length > 0 ?
@@ -136,15 +135,13 @@ export default function useListChatMaster(props){
                                                         <a href="/#" onClick={()=>{conversation(subchatmaster.chat_id)}} className="p-1">
                                                             <div className="media">
                                                                 <div className="chat-user-img align-self-center mr-3">
-                                                                <span className="badge badge-pill ml-3 z-index-2 position-absolute text-default bg-danger text-white ">{(subchatmaster.num_mensajes > 0)?subchatmaster.num_mensajes:''}</span><i className="fa fa-envelope fa-2x"></i> 
+                                                                    <span className="badge badge-pill ml-3 z-index-2 position-absolute text-default bg-danger text-white ">{(subchatmaster.num_mensajes > 0)?subchatmaster.num_mensajes:''}</span><i className="fa fa-envelope fa-2x"></i> 
                                                                 </div>
                                                                 <div className="media-body overflow-hidden">
                                                                     <h5 className="text-truncate font-size-15 mb-1">{subchatmaster.observacion}</h5>                                                                    
                                                                     <p className="chat-user-message text-truncate mb-0"><i className="fa fa-folder"></i> {subchatmaster.chat_id}</p>
                                                                 </div>
-
-                                                                <div className="font-size-11" id="minu">...</div>
-                                                                
+                                                                <div className="font-size-11" id="minu">...</div>                                                                
                                                             </div>
                                                         </a>                                                        
                                                     </li>                                                    

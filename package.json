@@ -14,7 +14,6 @@
         "react-dom": "^17.0.2",
         "react-scripts": "4.0.3",
         "uuidv4": "^6.2.12",
-        "web-audio-recorder-js": "0.0.2",
         "web-vitals": "^1.1.2"
     },
     "scripts": {
