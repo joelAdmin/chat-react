@@ -81,6 +81,7 @@ export default function useListChatMaster(props){
                                             conectado:data.conectado_emisor
                 }       
             } 
+            subChatAuto(data.emisor_id);
             props.parent.conversationsCallback(response.result, user);
         }).catch((error) => {
             console.log(error);

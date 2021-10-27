@@ -109,11 +109,8 @@ class Base extends Component
 	conversationsCallback = (getconversations, getuserto) => {
 		this.setState({conversations:getconversations, userTo:getuserto})
 		if(this.state.access === 'Mg=='){
-			console.log('ACTUALIZAR LISTA DE CHAT USER ....');
+			console.log('ACTUALIZAR LISTA DE CHAT NO LEIDOS USER ....');
 			this.chatsU();
-		}else{
-			console.log('ACTUALIZAR LISTA DE CHAT MASTER....');
-			this.chatsM();
 		}
 	}
 

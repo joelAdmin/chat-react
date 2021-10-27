@@ -18,7 +18,8 @@ class Conversation extends Component{
                 emisor_id: 0,
                 receptor_id:0,
                 chat_id:0
-            }
+            }, 
+            emojiTextoValue:''
         };
         
        // this.updatehidden();
@@ -67,16 +68,23 @@ class Conversation extends Component{
         $('.user-profile-sidebar').show();
     }
 
-    handleSendMessage = (e)=>{
+    handleSendMessage = (value)=>{
        this.setState({
-            form:{
+            /*form:{
                 emisor_id:this.props.parent.chatopen.emisor_id,
                 receptor_id:Object(this.props.parent.userTo).usuario_id,
                 chat_id:this.props.parent.chatopen.chat_id,
                 [e.target.name]:e.target.value
-            }
+            }*/
+            form:{
+                emisor_id:this.props.parent.chatopen.emisor_id,
+                receptor_id:Object(this.props.parent.userTo).usuario_id,
+                chat_id:this.props.parent.chatopen.chat_id,
+                mensaje:value
+            },
+            emojiTextoValue:value
         });
-        console.log('form:', this.state.form);
+        //console.log('form:', this.state.form);
     }
 
     handleSendMessageAudio = ()=>{
@@ -131,7 +139,8 @@ class Conversation extends Component{
         if( this.state.form.mensaje.length > 0){       
             $("#chat-conversation-list").append(text);
             $('#new'+vrandom).toggle({height:1000});
-            $("#mensaje").val('');    
+            //$("#mensaje").val(''); 
+            this.handleSendMessage(''); 
             
             //enviar menssaje
             axios.post(API.urlApi+'sendMessage', this.state.form, headers).then(response => {            

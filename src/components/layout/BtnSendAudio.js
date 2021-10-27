@@ -3,6 +3,14 @@ import '../../assets/css/microfono.css';
 import $ from 'jquery';
 import axios from "axios";
 import {API, headers} from '../lib/Lib';
+import '../../assets/css/textarea.css';
+import ReactQuill from "react-quill"; // ES6
+import "react-quill/dist/quill.bubble.css"; // ES6
+import 'react-quill/dist/quill.snow.css'; // ES6
+import 'react-quill/dist/quill.core.css'; // ES6
+
+import Picker, { SKIN_TONE_MEDIUM_DARK } from "emoji-picker-react";
+import 'emoji-picker-react/dist/main.css';
 
 class BtnSendAudio extends Component {
 
@@ -17,17 +25,49 @@ class BtnSendAudio extends Component {
                 ogg:''
             }
         }
-        this.props.callbackHandleSendMessageAudio();   
+        this.props.callbackHandleSendMessageAudio();  
+        this.quillRef = null;      // Quill instance
+        this.reactQuillRef = null; // ReactQuill component
     }
 
     componentDidMount(){
-        this.efectoJquery();
         this.grabador();  
+        //this.emojioneArea();
+        this.handleChange = this.handleChange.bind(this);
+        this.attachQuillRefs()
     }
 
     componentDidUpdate(){
-    
+        this.attachQuillRefs()
     }
+
+    /*
+    efectoJquery2 =()=>{
+        $('.ql-editor').on('keyup', function(){
+             console.log('escribiendo otro ...', this.state.textoValue);
+             if(this.state.textoValue === '<p><br></p'){
+                 $('.btn-audio').show();
+                 $('.btn-text').hide();
+             }else{
+                 $('.btn-audio').hide();
+                 $('.btn-text').show();
+             }
+         });
+ 
+         $('.ql-editor').on('blur', function(){
+             if(this.state.textoValue !== '<p><br></p'){
+                 console.log('blur ...');
+                 $('.btn-audio').hide();
+                 $('.btn-text').show();
+             }
+             
+             if(this.state.textoValue === '<p><br></p'){
+                 console.log('blur2 ...');
+                 $('.btn-audio').show();
+                 $('.btn-text').hide();
+             }
+         });
+     }*/
 
     efectoJquery =()=>{
        $('.input-send-message').on('keyup', function(){
@@ -35,8 +75,7 @@ class BtnSendAudio extends Component {
             if($(this).val() == ''){
                 $('.btn-audio').show();
                 $('.btn-text').hide();
-            }else
-            {
+            }else{
                 $('.btn-audio').hide();
                 $('.btn-text').show();
             }
@@ -64,7 +103,6 @@ class BtnSendAudio extends Component {
     updateRequestAudio =(ogg)=>{
         const form = this.props.parent.form;
         this.props.callbackHandleSendMessageAudio();
-
         this.setState({
             form:{
                 mensaje:form.mensaje,
@@ -73,8 +111,7 @@ class BtnSendAudio extends Component {
                 chat_id:form.chat_id,
                 ogg:ogg
             }
-        })
-        console.log('this.state.form',this.state.form);
+        });
     }
 
     
@@ -208,30 +245,121 @@ class BtnSendAudio extends Component {
         });
     }
 
+    emojioneArea =()=>{
+        /*
+            window.$("#mensaje").emojioneArea({
+                inline: true,
+                events: {
+                    keyup: function (editor, event) {                      
+                        if(editor.html() == ''){
+                            $('.btn-audio').show();
+                            $('.btn-text').hide();
+                        }else {
+                            if(event.keyCode == 13){
+                            $('#mensaje').val(this.getText());
+                            }else{
+                                $('.btn-audio').hide();
+                                $('.btn-text').show();
+                            }
+                        }
+                    },
+                    emojibtn_click: function (button, event) {
+                        console.log('event:emojibtn.click, emoji=' + button.children().data("name"));
+                    }
+                }
+            });
+        */
+        window.$("#mensaje").emojioneArea({
+            pickerPosition: "top",
+            filtersPosition: "bottom",
+            tones: false,
+            autocomplete: false,
+            inline: true,
+            hidePickerOnBlur: false
+        });
+    }
+
+    handleChange = (value) => {
+        this.props.callbackHandleSendMessage(value)
+        if(this.props.parent.emojiTextoValue === '<p><br></p>'){
+            $('.btn-audio').show();
+            $('.btn-text').hide();
+        }else{
+            $('.btn-audio').hide();
+            $('.btn-text').show();
+        }
+    }
+
+    attachQuillRefs = () => {
+        if (typeof this.reactQuillRef.getEditor !== 'function') return;
+        this.quillRef = this.reactQuillRef.getEditor();
+    }
+
+    insertEmoji =(value)=>{
+        var range = this.quillRef.getSelection();
+        let position = range ? range.index : 0;
+        this.quillRef.insertText(position, ''+value)
+    }
+
+    onEmojiClick =(event, emojiObject)=>{
+        console.log('selecciono', emojiObject);
+        this.insertEmoji(emojiObject.emoji);
+    }
+
+    showViewEmoji =(event)=>{
+        if($('#contentEmoji').css('display')=='none'){
+            $('#contentEmoji').show(200);
+        }else{
+            $('#contentEmoji').hide(200);
+        }
+    }
+
     preRender =()=>{ 
         return (<>
+            <div id="contentEmoji" className="emojiContent" style={{display:'none'}}>
+                <Picker
+                onEmojiClick={this.onEmojiClick}
+                disableAutoFocus={true}
+                skinTone={SKIN_TONE_MEDIUM_DARK}
+                groupNames={{ smileys_people: "PEOPLE" }}
+                native
+                />
+            </div>
             <form onSubmit={this.props.callbackHandleSubmit}>
-                <div className="p-3 p-lg-4 border-top mb-0">                        
+            
+                <div className="p-3 p-lg-4 border-top mb-0 content-textarea">                        
                     <div className="row no-gutters">                                    
                         <div className="col">
                             <div>
                                 <input type="hidden" name="emisor_id" id="emisor_id" />
                                 <input type="hidden" name="receptor_id" id="receptor_id" />                                            
-                                <input type="hidden" name="chat_id" id="chat_id" />
+                                <input type="hidden" name="chat_id" id="chat_id" />                           
+                                <ReactQuill
+                                        ref={(el) => { this.reactQuillRef = el }}
+                                        className="cke_editable bg-light border-light input-send-message textarea"
+                                        theme="bubble"
+                                        value={this.props.parent.emojiTextoValue}
+                                        onChange={this.handleChange}
+                                        placeholder={"Escribir aqui ..."}
+                                />
+                                {/*<div contentEditable={true} id="message" className="textarea_like_whatsapp bg-light border-light input-send-message" data-text="Type something...">       
+                                </div>
                                 <input type="text" name="mensaje" id="mensaje" className="form-control form-control-lg bg-light border-light input-send-message" onChange={this.props.callbackHandleSendMessage} placeholder="Enter Message..."/>
+                                <textarea name="mensaje" id="mensaje" className="form-control form-control-lg bg-light border-light input-send-message" onChange={this.props.callbackHandleSendMessage}></textarea>*/}
                             </div>
                         </div>
-                        <div className="col-auto">
+                        
+                        <div className="col-auto">                       
                             <div className="chat-input-links ml-md-2">
                                 <ul className="list-inline mb-0">
                                     <li key="1" className="list-inline-item">
-                                        <button type="button" className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect" data-toggle="tooltip" data-placement="top" title="Emoji">
-                                            <i className="ri-emotion-happy-line"></i>
+                                        <button type="button" onClick={(e)=>{this.showViewEmoji(e)}} id="emojioneArea" className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect" data-toggle="tooltip" data-placement="top" title="Emoji">
+                                            <i className="ri-emotion-happy-line fa-1x"></i>
                                         </button>
                                     </li>
-                                    <li key="2" className="list-inline-item">  
+                                    <li key="2" className="list-inline-item">                                    
                                         <button type="button" className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect" data-toggle="tooltip" data-placement="top" title="Attached File">
-                                            <i className="ri-attachment-line"></i>
+                                            <i className="ri-attachment-line fa-1x"></i>
                                         </button>
                                     </li>
                                     <li key="3" className="list-inline-item">                                                      
