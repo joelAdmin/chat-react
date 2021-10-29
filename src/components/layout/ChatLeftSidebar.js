@@ -23,7 +23,7 @@ class ChatLeftSidebar extends Component{
     
     render(){ 
         return (
-            <div className="chat-leftsidebar mr-lg-1">
+            <div onClick={this.props.callbackCloseEmjoi} className="chat-leftsidebar mr-lg-1">
 
                 <div className="tab-content">
                     {/* Start Profile tab-pane */}

@@ -165,7 +165,7 @@ class Conversation extends Component{
                     <>
                     {/* start chat conversation section */}
                     <div className="w-100">
-                        <div className="p-3 p-lg-4 border-bottom">   
+                        <div onClick={this.props.callbackCloseEmjoi} className="p-3 p-lg-4 border-bottom">   
                         {this.props.conversations.length > 0 &&                    
                             <div className="row align-items-center">
                                 <div className="col-sm-4 col-8">
@@ -225,7 +225,7 @@ class Conversation extends Component{
 
                         {/* start chat conversation */}
                         {(this.props.conversations.length > 0 ) &&
-                            <div id="chat-conversation" className="chat-conversation p-3 p-lg-4" data-simplebar="init">
+                            <div id="chat-conversation" onClick={this.props.callbackCloseEmjoi} className="chat-conversation p-3 p-lg-4" data-simplebar="init">
                                 <ul id="chat-conversation-list" className="list-unstyled mb-0">  
                                      {Object.values(this.props.conversations).map((values, key) => {
                                         if(values.ogg === null){
@@ -261,14 +261,14 @@ class Conversation extends Component{
 
                         {/* start chat input section */}
                         {this.props.conversations.length > 0 &&
-                            <BtnSendAudio callbackHandleSubmit={this.handleSubmit} callbackHandleSendMessage={this.handleSendMessage} callbackHandleSendMessageAudio={this.handleSendMessageAudio} parent={this.state} />
+                            <BtnSendAudio callbackCloseEmjoi={this.props.callbackCloseEmjoi} callbackHandleSubmit={this.handleSubmit} callbackHandleSendMessage={this.handleSendMessage} callbackHandleSendMessageAudio={this.handleSendMessageAudio} parent={this.state} />
                         }
                         {/* end chat input section */}
                     </div>
                     {/* end chat conversation section */}
 
                     {/* start User profile detail sidebar */}
-                    <div className="user-profile-sidebar">
+                    <div onClick={this.props.callbackCloseEmjoi} className="user-profile-sidebar">
                         <div className="px-3 px-lg-4 pt-3 pt-lg-4">
                             <div className="user-chat-nav text-right">
                                 <button type="button" className="btn nav-btn" id="user-profile-hide">

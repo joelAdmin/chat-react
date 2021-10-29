@@ -340,6 +340,7 @@ class BtnSendAudio extends Component {
                                         theme="bubble"
                                         value={this.props.parent.emojiTextoValue}
                                         onChange={this.handleChange}
+                                        onBlur={this.props.callbackCloseEmjoi}
                                         placeholder={"Escribir aqui ..."}
                                 />
                                 {/*<div contentEditable={true} id="message" className="textarea_like_whatsapp bg-light border-light input-send-message" data-text="Type something...">       

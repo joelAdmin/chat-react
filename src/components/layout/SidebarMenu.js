@@ -10,7 +10,7 @@ class SidebarMenu extends Component{
 
     sidebarMenu=()=>{
         return (
-        <div className="side-menu flex-lg-column mr-lg-1">
+        <div onClick={this.props.callbackCloseEmjoi} className="side-menu flex-lg-column mr-lg-1">
             {/* LOGO */}
             <div className="navbar-brand-box">
                 <a href="index.html" className="logo logo-dark">

@@ -8,6 +8,7 @@ import getChatsU from './helpers/ChatsU';
 import getChatsM from './helpers/ChatsM';
 import {ECHO, API, headers} from './lib/Lib';
 import axios from 'axios';
+import $ from 'jquery';
 
 
 class Base extends Component
@@ -132,22 +133,27 @@ class Base extends Component
 
 	sidebarMenu=()=>{		
 		if(this.state.userAuth !== ''){
-			return (<SidebarMenu auth={this.state.userAuth}></SidebarMenu>); 
+			return (<SidebarMenu callbackCloseEmjoi={this.callbackCloseEmjoi} auth={this.state.userAuth} ></SidebarMenu>); 
 		}   	
 	}
 	
 	chatLeftSidebar=()=>{
-		return (<ChatLeftSidebar getChatsM={this.state.getChatsM} getChatsU={this.state.getChatsU} auth={this.state.userAuth} access={this.state.access} openchatCallback={this.openchatCallback}  conversationsCallback={this.conversationsCallback}></ChatLeftSidebar>);
+		return (<ChatLeftSidebar callbackCloseEmjoi={this.callbackCloseEmjoi} getChatsM={this.state.getChatsM} getChatsU={this.state.getChatsU} auth={this.state.userAuth} access={this.state.access} openchatCallback={this.openchatCallback}  conversationsCallback={this.conversationsCallback}></ChatLeftSidebar>);
 	}
 	
 	conversation=()=>{
-		return (<Conversation parent={this.state}  conversations={this.state.conversations} userTo={this.state.userTo}></Conversation>);
+		return (<Conversation callbackCloseEmjoi={this.callbackCloseEmjoi} parent={this.state}  conversations={this.state.conversations} userTo={this.state.userTo}></Conversation>);
 	}
 
+	callbackCloseEmjoi = () =>{
+		if($('#contentEmoji').css('display')!= 'none'){           
+            $('#contentEmoji').hide(200);
+        }
+	}
 
 	render(){
 		return (
-			<div className="layout-wrapper d-lg-flex">				
+			<div className="layout-wrapper d-lg-flex" >				
 				{this.sidebarMenu()}				
 				{this.chatLeftSidebar()}
 				{this.conversation()}
