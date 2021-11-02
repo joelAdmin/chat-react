@@ -1,0 +1,58 @@
+{
+    "upload_data": {
+        "file_name": "102528f9760ad162bd3e3af2f7234a94.pdf",
+        "file_type": "application\/pdf",
+        "file_path": "\/home\/forvmcom\/public_html\/asistencialegal\/images\/uploads\/attachment\/chats\/128\/",
+        "full_path": "\/home\/forvmcom\/public_html\/asistencialegal\/images\/uploads\/attachment\/chats\/128\/102528f9760ad162bd3e3af2f7234a94.pdf",
+        "raw_name": "102528f9760ad162bd3e3af2f7234a94",
+        "orig_name": "Clases_Excel_.pdf",
+        "client_name": "Clases Excel .pdf",
+        "file_ext": ".pdf",
+        "file_size": 631.34,
+        "is_image": false,
+        "image_width": null,
+        "image_height": null,
+        "image_type": "",
+        "image_size_str": "",
+        "imagen_nueva": "https:\/\/asistencialegal.com.co\/images\/uploads\/attachment\/chats\/128\/54f0d51da948c8c6a3ecff4d7da73f61.pdf",
+        "nuevo_nombre": "54f0d51da948c8c6a3ecff4d7da73f61.pdf"
+    },
+    "path": "images\/uploads\/attachment\/chats\/128\/54f0d51da948c8c6a3ecff4d7da73f61.pdf"
+}
+
+
+{
+    "upload_data": {
+        "file_name": "JOEL_SE_2021.pdf",
+        *
+        "file_type": "application\/pdf",
+        *
+        "file_path": "\/tmp\/phpKy1LfQ",
+        ?
+        "full_path" : "\/tmp\/phpKy1LfQ\/JOEL_SE_2021.pdf",
+        ?
+        "raw_name" : null,
+        x "orig_name": "JOEL_SE_2021.pdf",
+        *
+        "client_name": "JOEL_SE_2021.pdf",
+        *
+        "file_ext": "pdf",
+        ?
+        "file_size" : 131783,
+        *
+        "is_image": false,
+        x "image_width": null,
+        *
+        "image_height": null,
+        *
+        "image_type": "",
+        *
+        "image_size_str": "",
+        *
+        "imagen_nueva": "7529f3594cc53a95f23472ca6b8d23e6pdf",
+        ?
+        "nuevo_nombre" : "7529f3594cc53a95f23472ca6b8d23e6pdf"
+    },
+    ?
+    "path" : "images\/uploads\/attachment\/chats\/986\/7529f3594cc53a95f23472ca6b8d23e6pdf"
+} ?

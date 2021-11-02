@@ -43,6 +43,13 @@
     position: relative;
 }
 
+.bloqueodiv {
+    opacity: 0.5;
+    /*background-color: rgb(0, 0, 0);
+    color: #fff;
+    text-align: center;*/
+}
+
 
 /* Extra small devices (phones, 600px and down) 
 

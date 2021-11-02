@@ -133,22 +133,21 @@ class Conversation extends Component{
         event.preventDefault();
         const text = this.htmlText(vrandom, this.props.parent.userAuth.avatar, this.state.form.mensaje);
      
-        console.log('datos ha enviar', this.state.form);
-        console.log('datos ha enviar chat_id', this.state.form.chat_id);
+        //console.log('datos ha enviar', this.state.form);
+        //console.log('datos ha enviar chat_id', this.state.form.chat_id);
 
         if( this.state.form.mensaje.length > 0){       
             $("#chat-conversation-list").append(text);
             $('#new'+vrandom).toggle({height:1000});
             //$("#mensaje").val(''); 
-            this.handleSendMessage(''); 
-            
+            this.handleSendMessage('');             
             //enviar menssaje
             axios.post(API.urlApi+'sendMessage', this.state.form, headers).then(response => {            
                 if(response.data.res){
-                    console.log('go:', response.data);
+                    //console.log('go:', response.data);
                     //alert('mensaje enviado ..');
                 }else{
-                    console.log('no:', response.data);
+                    //console.log('no:', response.data);
                     //alert('mensaje NO enviado ..');
                 }      
             }).catch(error => {
@@ -261,7 +260,7 @@ class Conversation extends Component{
 
                         {/* start chat input section */}
                         {this.props.conversations.length > 0 &&
-                            <BtnSendAudio callbackCloseEmjoi={this.props.callbackCloseEmjoi} callbackHandleSubmit={this.handleSubmit} callbackHandleSendMessage={this.handleSendMessage} callbackHandleSendMessageAudio={this.handleSendMessageAudio} parent={this.state} />
+                            <BtnSendAudio auth={this.props.parent.userAuth} callbackCloseEmjoi={this.props.callbackCloseEmjoi} callbackHandleSubmit={this.handleSubmit} callbackHandleSendMessage={this.handleSendMessage} callbackHandleSendMessageAudio={this.handleSendMessageAudio} parent={this.state} />
                         }
                         {/* end chat input section */}
                     </div>

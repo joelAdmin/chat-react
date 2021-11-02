@@ -30,7 +30,7 @@ export default function useListChatMaster(props){
 
     const queryChats = () => {       
         if(props.parent.getChatsM.length > 0){
-            console.log('master get', props.parent.getChatsM);
+            //console.log('master get', props.parent.getChatsM);
             setChats(props.parent.getChatsM);
             if(chats.length > 0){
                 subChatAuto(chats[0].emisor_id);

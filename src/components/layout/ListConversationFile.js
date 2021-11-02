@@ -38,13 +38,13 @@ class ListConversationFile extends Component {
                                 <li key={random}  className="list-inline-item message-img-list">
                                     <div>
                                         <a className="popup-img d-inline-block m-1" href="/#" title="Project 1">
-                                            <img src={JSON.parse(this.props.values.mensaje).path} alt="imagen" className="rounded border"/>
+                                            <img src={JSON.parse(this.props.values.mensaje).upload_data.imagen_nueva} alt="imagen" className="rounded border"/>
                                         </a>
                                     </div>
                                     <div className="message-img-link">
                                         <ul className="list-inline mb-0">
                                             <li key={random} className="list-inline-item">
-                                                <a href="/#">
+                                                <a href={JSON.parse(this.props.values.mensaje).upload_data.imagen_nueva} download="archivo">
                                                     <i className="ri-download-2-line"></i>
                                                 </a>
                                             </li>

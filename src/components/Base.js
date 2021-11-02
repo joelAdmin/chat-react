@@ -3,7 +3,7 @@ import SidebarMenu from './layout/SidebarMenu.js';
 import ChatLeftSidebar from './layout/ChatLeftSidebar.js';
 import Conversation from './layout/Conversation.js';
 import getuserAuth from './helpers/UserAuth';
-import getConversations from './helpers/Conversations';
+//import getConversations from './helpers/Conversations';
 import getChatsU from './helpers/ChatsU';
 import getChatsM from './helpers/ChatsM';
 import {ECHO, API, headers} from './lib/Lib';
@@ -43,16 +43,16 @@ class Base extends Component
 	chatsU =()=>{
 		//console.log('Actualizando conversation controlador user', this.state.userAuth.usuario_id) ; 
         getChatsU(this.state.userAuth.usuario_id).then(response=>{
-			console.log('Actualizando conversation controlador', response.result); 
+			//console.log('Actualizando conversation controlador', response.result); 
             this.setState({getChatsU:response.result});  
         });
     }
 
 	chatsM =()=>{
-		console.log('Actualizando chat Master', this.state.userAuth.usuario_id); 
+		//console.log('Actualizando chat Master', this.state.userAuth.usuario_id); 
 		getChatsM().then((response)=>{
 			this.setState({getChatsM:response.result}); 
-			console.log('Actualizado chat Master', this.state.getChatsM); 
+			//console.log('Actualizado chat Master', this.state.getChatsM); 
         }).catch((error)=>{
             console.log('error',error);
         });
@@ -64,20 +64,20 @@ class Base extends Component
 			 * varificar si hay chat o coversaciones abiertas ---> si las hay solo atualizo las conversaciones
 			 * sino solo actualizo la lista de mensaje sin leer
 			 */
-			console.log('channel new message', data);
+			//console.log('channel new message', data);
 			if(this.state.chatopen.open === true && parseInt(data.chat_id) === parseInt(this.state.chatopen.chat_id)){
 				axios.get(API.urlApi+'getMessage/'+data.chat_id, headers).then(response =>{
-					console.log('Actualizando conversation', response.data.result) ; 
+					//console.log('Actualizando conversation', response.data.result) ; 
 					this.conversationsCallback(response.data.result, data.user_emisor);
 				}).catch(error =>{
 					console.log(error);
 				});
 			}else{
 				if(this.state.access === 'Mg=='){
-					console.log('ACTUALIZAR LISTA DE CHAT USER ....');
+					//console.log('ACTUALIZAR LISTA DE CHAT USER ....');
 					this.chatsU();
 				}else{
-					console.log('FALTO EL ACTUALIZAR SUBCHAT CON MENSAJE NUEVO....');
+					//console.log('FALTO EL ACTUALIZAR SUBCHAT CON MENSAJE NUEVO....');
 					this.chatsM();
 				}
 			}
@@ -88,12 +88,12 @@ class Base extends Component
 		getuserAuth().then(response => {
 			this.setState({userAuth:response.result, access:response.access});
 			this.config();
-			console.log('this.props.access ', this.state.access );
+			//console.log('this.props.access ', this.state.access );
 			if(this.state.access === 'Mg=='){
-				console.log('Usuario');
+				//console.log('Usuario');
 				this.chatsU();
 			}else{
-				console.log('Master');
+				//console.log('Master');
 				this.chatsM();
 			}			
 		});		   
@@ -110,7 +110,7 @@ class Base extends Component
 	conversationsCallback = (getconversations, getuserto) => {
 		this.setState({conversations:getconversations, userTo:getuserto})
 		if(this.state.access === 'Mg=='){
-			console.log('ACTUALIZAR LISTA DE CHAT NO LEIDOS USER ....');
+			//console.log('ACTUALIZAR LISTA DE CHAT NO LEIDOS USER ....');
 			this.chatsU();
 		}
 	}
@@ -124,7 +124,7 @@ class Base extends Component
 				receptor_id:0,
 			}
 		});
-		console.log('ABRIENDO CHAT', this.state.chatopen);
+		//console.log('ABRIENDO CHAT', this.state.chatopen);
 	}
 
 	modifyMessage= (data) => {

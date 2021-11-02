@@ -11,6 +11,7 @@ import 'react-quill/dist/quill.core.css'; // ES6
 
 import Picker, { SKIN_TONE_MEDIUM_DARK } from "emoji-picker-react";
 import 'emoji-picker-react/dist/main.css';
+import '../../assets/css/filehidden.css'
 
 class BtnSendAudio extends Component {
 
@@ -23,18 +24,28 @@ class BtnSendAudio extends Component {
                 receptor_id:0,
                 chat_id:0,
                 ogg:''
+            },
+            formFile:{
+                mensaje:'',
+                emisor_id: 0,
+                receptor_id:0,
+                chat_id:0,
+                ogg:'',
+                file:''
             }
         }
         this.props.callbackHandleSendMessageAudio();  
         this.quillRef = null;      // Quill instance
         this.reactQuillRef = null; // ReactQuill component
+        
     }
 
     componentDidMount(){
         this.grabador();  
         //this.emojioneArea();
         this.handleChange = this.handleChange.bind(this);
-        this.attachQuillRefs()
+        this.attachQuillRefs();     
+        console.log('auth::>', this.props.auth);
     }
 
     componentDidUpdate(){
@@ -71,7 +82,6 @@ class BtnSendAudio extends Component {
 
     efectoJquery =()=>{
        $('.input-send-message').on('keyup', function(){
-            console.log('escribiendo ...', $(this).val());
             if($(this).val() == ''){
                 $('.btn-audio').show();
                 $('.btn-text').hide();
@@ -83,13 +93,11 @@ class BtnSendAudio extends Component {
 
         $('.input-send-message').on('blur', function(){
             if($('.input-send-message').val() != ''){
-                console.log('blur ...');
                 $('.btn-audio').hide();
                 $('.btn-text').show();
             }
             
             if($('.input-send-message').val() == ''){
-                console.log('blur2 ...');
                 $('.btn-audio').show();
                 $('.btn-text').hide();
             }
@@ -135,11 +143,8 @@ class BtnSendAudio extends Component {
         const thas = this;   
        
         $('.microphone').on("click", function() {
-            console.log('realizo un click');
-           
             clicked = true;
             if(!!navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
-                console.log('ejecuntandose');
                 $('#microphone').hide();
                 $('#microphoneStop').show();
                 var constraints = { audio: true, video: false };
@@ -175,15 +180,15 @@ class BtnSendAudio extends Component {
                             //console.log('form_',thas.state.form);                            
                             axios.post(API.urlApi+'sendMessageAudio', thas.state.form, headers).then(response => {            
                                 if(response.data.res){
-                                    console.log('go:', response.data);
+                                    //console.log('go:', response.data);
                                 }else{
-                                    console.log('no:', response.data);
+                                    //console.log('no:', response.data);
                                 }      
                             }).catch(error => {
                                 console.log('Error 0001x Send form', error);
                             });
                         }
-                        console.log('blob', blob.size);
+                        //console.log('blob', blob.size);
                         
                         var audioObjectURL = window.URL.createObjectURL(blob);
                         var audio = '<audio title="audio" class="audio" controls=""><source src="'+audioObjectURL+'" type="audio/wav"></audio>';
@@ -302,7 +307,6 @@ class BtnSendAudio extends Component {
     }
 
     onEmojiClick =(event, emojiObject)=>{
-        console.log('selecciono', emojiObject);
         this.insertEmoji(emojiObject.emoji);
     }
 
@@ -312,6 +316,142 @@ class BtnSendAudio extends Component {
         }else{
             $('#contentEmoji').hide(200);
         }
+    }
+
+    handleUpload = (event) => {        
+        var data = new FormData();
+        data.append("chat_id", this.props.parent.form.chat_id);
+        data.append("mensaje", '');
+        data.append("emisor_id", this.props.parent.form.emisor_id);
+        data.append("receptor_id", this.props.parent.form.receptor_id);
+        data.append("ogg", '');
+        data.append ("file", event.target.files[0]);
+        console.log('FormData:', event.target.files[0]);
+
+        var random = getRandomArbitrary(0, 999);
+        var thas = this;
+        var avatar = thas.props.auth.avatar;
+        var nombre = thas.props.auth.nombres;
+        var type = event.target.files[0].type;
+
+        function typeImage(image){
+			if((image=='image/gif') || (image=='image/png') || (image=='image/jpeg') || (image=='image/png') || (image=='application/x-shockwave-flash') || (image=='image/psd') || (image=='image/bmp') || (image=='image/tiff') || (image=='image/tiff') || (image=='application/octet-stream')|| (image=='	image/jp2') || (image=='application/octet-stream') || (image=='image/iff') || (image=='image/vnd.wap.wbmp') || (image=='image/xbm') || (image=='image/vnd.microsoft.icon')){
+				return true;
+			}else{
+				return false;
+			}
+		}
+
+        function getRandomArbitrary(min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+        function prerendeImg(path){
+            var str = `<li class="right">
+                        <div class="conversation-list">
+                        <div class="chat-avatar">
+                            <img src="${avatar}" alt="avatar"/>
+                        </div>
+                        <div class="user-chat-content">
+                            <div class="ctext-wrap">
+                                <div class="ctext-wrap-content">
+                                    <ul class="list-inline message-img  mb-0">                                            
+                                        <li key="li_${random}"  class="list-inline-item message-img-list">
+                                            <div id="div_messa_img_${random}"  class="bloqueodiv">
+                                                <a class="popup-img d-inline-block m-1" href="/#" title="Project 1">
+                                                <img src="${path}" alt="imagen" class="rounded border"/>
+                                                </a>
+                                            </div>
+                                            <div class="message-img-link" id="options_${random}">
+                                                <ul id="ul_options1_${random}" class="list-inline mb-0">
+                                                    <li key="${random+1}" class="list-inline-item align-items-center">
+                                                        <b class="text-danger">Cargando ...</b>
+                                                    </li>
+                                                </ul>
+                                                <ul id="ul_options2_${random}" class="list-inline mb-0" style="display:none;">
+                                                    <li key="${random}" class="list-inline-item">
+                                                        <a href="${path}" download="archivo">
+                                                            <i class="ri-download-2-line"></i>                                                            
+                                                        </a>
+                                                    </li>
+                                                    <li key="${random}" class="list-inline-item dropdown">
+                                                        <a class="dropdown-toggle" href="/#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="ri-more-fill"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="/#">Copy <i class="ri-file-copy-line float-right text-muted"></i></a>
+                                                            <a class="dropdown-item" href="/#">Save <i class="ri-save-line float-right text-muted"></i></a>
+                                                            <a class="dropdown-item" href="/#">Forward <i class="ri-chat-forward-line float-right text-muted"></i></a>
+                                                            <a class="dropdown-item" href="/#">Delete <i class="ri-delete-bin-line float-right text-muted"></i></a>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>                                            
+                                    </ul>
+                                <p class="chat-time mb-0"><i class="ri-time-line align-middle"></i> <span class="align-middle">10:09</span></p>
+                            </div>
+    
+                            <div class="dropdown align-self-start">
+                                <a class="dropdown-toggle" href="/#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="ri-more-2-fill"></i>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="/#">Copy <i class="ri-file-copy-line float-right text-muted"></i></a>
+                                    <a class="dropdown-item" href="/#">Save <i class="ri-save-line float-right text-muted"></i></a>
+                                    <a class="dropdown-item" href="/#">Forward <i class="ri-chat-forward-line float-right text-muted"></i></a>
+                                    <a class="dropdown-item" href="/#">Delete <i class="ri-delete-bin-line float-right text-muted"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="conversation-name">${nombre}</div>
+                    </div>
+                </div> 
+            </li>`;
+            
+            return str;
+        }
+
+        if (event.target.files && event.target.files[0]) {  
+            if(typeImage(type) == true){        
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var src = prerendeImg(e.target.result);
+                    $("#chat-conversation-list").append(src); 
+                    setTimeout(function(){
+                        var scroll = document.querySelector('#chat-conversation .simplebar-content-wrapper');
+                        $('#chat-conversation .simplebar-content-wrapper').animate( {scrollTop : scroll.scrollHeight}, 800 );
+                    }, 100); 
+                };
+                reader.readAsDataURL(event.target.files[0]);
+            }else{
+                var str = '<li class="right" style="list-style:none;">'+
+                                        '<div class="conversation-list">'+
+                                            '<div class="user-chat-content">'+                                            
+                                                '<div class="ctext-wrap">'+
+                                                    '<div class="ctext-wrap-content">'+                                                     
+                                                        '<p class="mb-0"> archivo</p>'+                                                                                                 
+                                                    '</div>'+
+                                                '</div>'+
+                                            '</div>'+
+                                        '</div>'+
+                                    '</li>'; 
+                $("#chat-conversation-list").append(str);  
+            }
+        }
+
+        axios.post(API.urlApi+'sendMessageFile', data, headers).then(response => {   
+            if(response.data.res){
+                console.log('go:', response.data);
+                $("#div_messa_img_"+random).removeClass('bloqueodiv'); 
+                $("#ul_options1_"+random).hide(100); 
+                $("#ul_options2_"+random).show(100); 
+            }else{
+                console.log('no:', response.data);
+            }    
+        }).catch(error => {
+            console.log('Error 0001x Send form file', error);
+        });
     }
 
     preRender =()=>{ 
@@ -359,9 +499,10 @@ class BtnSendAudio extends Component {
                                         </button>
                                     </li>
                                     <li key="2" className="list-inline-item">                                    
-                                        <button type="button" className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect" data-toggle="tooltip" data-placement="top" title="Attached File">
-                                            <i className="ri-attachment-line fa-1x"></i>
-                                        </button>
+                                        <a href="/#" className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect" data-toggle="tooltip" data-placement="top" title="Attached File">
+                                            <input onChange={(event)=>{this.handleUpload(event)}} name="inputfile" type="file"/> 
+                                            <i id="sendFile" className="ri-attachment-line fa-1x"></i>
+                                        </a>
                                     </li>
                                     <li key="3" className="list-inline-item">                                                      
                                         <a href="/#" className="btn btn-primary font-size-16 btn-lg chat-send waves-effect waves-light btn-audio" >
