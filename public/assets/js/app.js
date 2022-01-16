@@ -1,12 +1,12 @@
-$(function(a) {
+$(document).ready(function() {
     "use strict";
-    a(".dropdown-menu a.dropdown-toggle").on("click", function(t) {
-        return a(this).next().hasClass("show") || a(this).parents(".dropdown-menu").first().find(".show").removeClass("show"), a(this).next(".dropdown-menu").toggleClass("show"), !1
-    }), a(function() {
-        a('[data-toggle="tooltip"]').tooltip()
-    }), a(function() {
-        a('[data-toggle="popover"]').popover()
-    }), a("#light-dark").on("click", function(t) {
-        "disabled" !== a("#bootstrap-style").attr("disabled") ? (a("#bootstrap-dark-style").attr("disabled", !1), a("#bootstrap-style").attr("disabled", !0), a("#app-dark-style").attr("disabled", !1), a("#app-style").attr("disabled", !0)) : (a("#bootstrap-dark-style").attr("disabled", !0), a("#bootstrap-style").attr("disabled", !1), a("#app-dark-style").attr("disabled", !0), a("#app-style").attr("disabled", !1))
-    }), Waves.init()
-}(jQuery));
+       $(".dropdown-menu a.dropdown-toggle").on("click", function(t) {
+            return $(this).next().hasClass("show") || $(this).parents(".dropdown-menu").first().find(".show").removeClass("show"), $(this).next(".dropdown-menu").toggleClass("show"), !1
+        }), $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+        }), $(function() {
+            $('[data-toggle="popover"]').popover()
+        }), $("#light-dark").on("click", function(t) {console.log('color dark', $("#bootstrap-style").attr("disabled"));
+            "disabled" !== $("#bootstrap-style").attr("disabled") ? ($("#bootstrap-dark-style").attr("disabled", !1), $("#bootstrap-style").attr("disabled", !0), $("#app-dark-style").attr("disabled", !1), $("#app-style").attr("disabled", !0)) : ($("#bootstrap-dark-style").attr("disabled", !0), $("#bootstrap-style").attr("disabled", !1), $("#app-dark-style").attr("disabled", !0), $("#app-style").attr("disabled", !1))
+        }), Waves.init()
+});

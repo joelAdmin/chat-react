@@ -13,7 +13,7 @@ import Picker, { SKIN_TONE_MEDIUM_DARK } from "emoji-picker-react";
 import 'emoji-picker-react/dist/main.css';
 import '../../assets/css/filehidden.css'
 
-class BtnSendAudio extends Component {
+class FooterChatOpen extends Component {
 
     constructor(props){
         super(props); 
@@ -42,7 +42,6 @@ class BtnSendAudio extends Component {
 
     componentDidMount(){
         this.grabador();  
-        //this.emojioneArea();
         this.handleChange = this.handleChange.bind(this);
         this.attachQuillRefs();     
         console.log('auth::>', this.props.auth);
@@ -51,34 +50,6 @@ class BtnSendAudio extends Component {
     componentDidUpdate(){
         this.attachQuillRefs()
     }
-
-    /*
-    efectoJquery2 =()=>{
-        $('.ql-editor').on('keyup', function(){
-             console.log('escribiendo otro ...', this.state.textoValue);
-             if(this.state.textoValue === '<p><br></p'){
-                 $('.btn-audio').show();
-                 $('.btn-text').hide();
-             }else{
-                 $('.btn-audio').hide();
-                 $('.btn-text').show();
-             }
-         });
- 
-         $('.ql-editor').on('blur', function(){
-             if(this.state.textoValue !== '<p><br></p'){
-                 console.log('blur ...');
-                 $('.btn-audio').hide();
-                 $('.btn-text').show();
-             }
-             
-             if(this.state.textoValue === '<p><br></p'){
-                 console.log('blur2 ...');
-                 $('.btn-audio').show();
-                 $('.btn-text').hide();
-             }
-         });
-     }*/
 
     efectoJquery =()=>{
        $('.input-send-message').on('keyup', function(){
@@ -122,7 +93,6 @@ class BtnSendAudio extends Component {
         });
     }
 
-    
     grabador =()=> {
         const selector_star = document.querySelector(".microphone");
         const selector_stop = document.querySelector(".microphoneStop");
@@ -251,29 +221,6 @@ class BtnSendAudio extends Component {
     }
 
     emojioneArea =()=>{
-        /*
-            window.$("#mensaje").emojioneArea({
-                inline: true,
-                events: {
-                    keyup: function (editor, event) {                      
-                        if(editor.html() == ''){
-                            $('.btn-audio').show();
-                            $('.btn-text').hide();
-                        }else {
-                            if(event.keyCode == 13){
-                            $('#mensaje').val(this.getText());
-                            }else{
-                                $('.btn-audio').hide();
-                                $('.btn-text').show();
-                            }
-                        }
-                    },
-                    emojibtn_click: function (button, event) {
-                        console.log('event:emojibtn.click, emoji=' + button.children().data("name"));
-                    }
-                }
-            });
-        */
         window.$("#mensaje").emojioneArea({
             pickerPosition: "top",
             filtersPosition: "bottom",
@@ -310,7 +257,7 @@ class BtnSendAudio extends Component {
         this.insertEmoji(emojiObject.emoji);
     }
 
-    showViewEmoji =(event)=>{
+    handleShowViewEmoji =(event)=>{
         if($('#contentEmoji').css('display')=='none'){
             $('#contentEmoji').show(200);
         }else{
@@ -346,7 +293,7 @@ class BtnSendAudio extends Component {
             return Math.floor(Math.random() * (max - min)) + min;
         }
 
-        function prerendeImg(path){
+        function preRenderImg(path){
             var str = `<li class="right">
                         <div class="conversation-list">
                         <div class="chat-avatar">
@@ -407,8 +354,7 @@ class BtnSendAudio extends Component {
                         <div class="conversation-name">${nombre}</div>
                     </div>
                 </div> 
-            </li>`;
-            
+            </li>`;            
             return str;
         }
 
@@ -416,7 +362,7 @@ class BtnSendAudio extends Component {
             if(typeImage(type) == true){        
                 var reader = new FileReader();
                 reader.onload = function (e) {
-                    var src = prerendeImg(e.target.result);
+                    var src = preRenderImg(e.target.result);
                     $("#chat-conversation-list").append(src); 
                     setTimeout(function(){
                         var scroll = document.querySelector('#chat-conversation .simplebar-content-wrapper');
@@ -454,8 +400,9 @@ class BtnSendAudio extends Component {
         });
     }
 
-    preRender =()=>{ 
-        return (<>
+    renderContentEmoji = () => {
+        return (
+        <React.Fragment>
             <div id="contentEmoji" className="emojiContent" style={{display:'none'}}>
                 <Picker
                 onEmojiClick={this.onEmojiClick}
@@ -465,8 +412,51 @@ class BtnSendAudio extends Component {
                 native
                 />
             </div>
+        </React.Fragment>);
+    }
+
+    renderListBtn = () => {
+        return (<React.Fragment>
+            <div className="col-auto">                       
+                <div className="chat-input-links ml-md-2">
+                    <ul className="list-inline mb-0">
+                        <li key="1" className="list-inline-item">
+                            <button type="button" onClick={(e)=>{this.handleShowViewEmoji(e)}} id="emojioneArea" className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect" data-toggle="tooltip" data-placement="top" title="Emoji">
+                                <i className="ri-emotion-happy-line fa-1x"></i>
+                            </button>
+                        </li>
+                        <li key="2" className="list-inline-item">                                    
+                                <a href="/#" className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect" data-toggle="tooltip" data-placement="top" title="Attached File">
+                                <input onChange={(event)=>{this.handleUpload(event)}} name="inputfile" type="file"/> 
+                                <i id="sendFile" className="ri-attachment-line fa-1x"></i>
+                            </a>
+                        </li>
+                        <li key="3" className="list-inline-item">                                                      
+                            <a href="/#" className="btn btn-primary font-size-16 btn-lg chat-send waves-effect waves-light btn-audio" >
+                                <div id="div-btn-send-audio" className="pb-3 mb-3 pr-4 mr-2 ml-0 pl-0">                                                
+                                    <div className="microphoneStop noactivem" id="microphoneStop">
+                                        <i className="fa fa-microphone-slash"></i>
+                                        <div className="decibel" id="microphoneStopbar"></div>
+                                    </div>
+                                    <div className="microphone" id="microphone">
+                                        <i className="material-icons">keyboard_voice</i>
+                                        <div className="decibel" id="microphonebar"></div>
+                                    </div>
+                                </div> 
+                            </a>
+                            <button type="submit" onSubmit={this.props.callbackHandleSubmit} className="btn btn-primary font-size-16 btn-lg chat-send waves-effect waves-light btn-text noactivem">
+                                <i className="ri-send-plane-2-fill"></i>
+                            </button>
+                        </li>              
+                    </ul>
+                </div>                                    
+            </div> 
+        </React.Fragment>);
+    }
+
+    renderFormTextSend = ()=> {
+        return (<React.Fragment>
             <form onSubmit={this.props.callbackHandleSubmit}>
-            
                 <div className="p-3 p-lg-4 border-top mb-0 content-textarea">                        
                     <div className="row no-gutters">                                    
                         <div className="col">
@@ -489,45 +479,21 @@ class BtnSendAudio extends Component {
                                 <textarea name="mensaje" id="mensaje" className="form-control form-control-lg bg-light border-light input-send-message" onChange={this.props.callbackHandleSendMessage}></textarea>*/}
                             </div>
                         </div>
-                        
-                        <div className="col-auto">                       
-                            <div className="chat-input-links ml-md-2">
-                                <ul className="list-inline mb-0">
-                                    <li key="1" className="list-inline-item">
-                                        <button type="button" onClick={(e)=>{this.showViewEmoji(e)}} id="emojioneArea" className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect" data-toggle="tooltip" data-placement="top" title="Emoji">
-                                            <i className="ri-emotion-happy-line fa-1x"></i>
-                                        </button>
-                                    </li>
-                                    <li key="2" className="list-inline-item">                                    
-                                        <a href="/#" className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect" data-toggle="tooltip" data-placement="top" title="Attached File">
-                                            <input onChange={(event)=>{this.handleUpload(event)}} name="inputfile" type="file"/> 
-                                            <i id="sendFile" className="ri-attachment-line fa-1x"></i>
-                                        </a>
-                                    </li>
-                                    <li key="3" className="list-inline-item">                                                      
-                                        <a href="/#" className="btn btn-primary font-size-16 btn-lg chat-send waves-effect waves-light btn-audio" >
-                                            <div id="div-btn-send-audio" className="pb-3 mb-3 pr-4 mr-2 ml-0 pl-0">                                                
-                                                <div className="microphoneStop noactivem" id="microphoneStop">
-                                                    <i className="fa fa-microphone-slash"></i>
-                                                    <div className="decibel" id="microphoneStopbar"></div>
-                                                </div>
-                                                <div className="microphone" id="microphone">
-                                                    <i className="material-icons">keyboard_voice</i>
-                                                    <div className="decibel" id="microphonebar"></div>
-                                                </div>
-                                            </div> 
-                                        </a>
-                                        <button type="submit" onSubmit={this.props.callbackHandleSubmit} className="btn btn-primary font-size-16 btn-lg chat-send waves-effect waves-light btn-text noactivem">
-                                            <i className="ri-send-plane-2-fill"></i>
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>                                    
-                        </div>                                
+                        {this.renderListBtn()}
+                                                       
                     </div>                        
                 </div>
             </form>
-        </>);
+        </React.Fragment>);
+    }
+
+    preRender =()=>{ 
+        return (
+            <React.Fragment>
+                {this.renderContentEmoji()}
+                {this.renderFormTextSend()}
+            </React.Fragment>
+        );
     }
 
     render(){
@@ -535,4 +501,4 @@ class BtnSendAudio extends Component {
     }
 }
 
-export default BtnSendAudio;
+export default FooterChatOpen;

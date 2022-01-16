@@ -68,6 +68,16 @@ export const headers = {
     data: {},
 }
 
+
+export const headersBlod = {
+    headers: {
+      responseType: 'blob',
+      accept: 'application/json',
+      Authorization: 'Bearer '+localStorage.getItem('token')
+    },
+    data: {},
+}
+
 //headers Autorization post
 export const headersPost = {
     headers: {

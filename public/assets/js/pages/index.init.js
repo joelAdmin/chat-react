@@ -1,10 +1,10 @@
 $(document).ready(function() {
-    $(".popup-img").magnificPopup({
+   /* $(".popup-img").magnificPopup({
             type: "image",
             closeOnContentClick: !0,
             mainClass: "mfp-img-mobile",
             image: { verticalFit: !0 }
-        }),
+        }),*/
         $("#user-status-carousel").owlCarousel({
             items: 4,
             loop: !1,

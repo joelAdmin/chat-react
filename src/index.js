@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 //import './index.css';
-import './assets/libs/magnific-popup/magnific-popup.css';
-import './assets/libs/owl.carousel/assets/owl.carousel.min.css';
-import './assets/libs/owl.carousel/assets/owl.theme.default.min.css';
-import './assets/css/bootstrap-dark.min.css';
-import './assets/css/bootstrap.min.css';
+//import './assets/libs/magnific-popup/magnific-popup.css';
+//import './assets/libs/owl.carousel/assets/owl.carousel.min.css';
+//import './assets/libs/owl.carousel/assets/owl.theme.default.min.css';
+//import './assets/css/bootstrap-dark.min.css';
+//import './assets/css/bootstrap.min.css';
 //import './assets/css/icons.min.css';
-import './assets/css/app-dark.min.css';
-import './assets/css/app.min.css';
+//import './assets/css/app-dark.min.css';
+//import './assets/css/app.min.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
