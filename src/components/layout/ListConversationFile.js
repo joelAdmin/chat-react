@@ -4,8 +4,8 @@ import {random, IMG, API, headersBlod} from '../lib/Lib';
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
 import $ from 'jquery';
-//import * as myModule from '../../assets/libs/magnific-popup/jquery.magnific-popup.min.js';
-//import { MagnificPopup } from 'react-magnific-popup';
+import * as myModule from '../../assets/libs/magnific-popup/jquery.magnific-popup.min.js';
+
 
 class ListConversationFile extends Component {
 
@@ -54,16 +54,18 @@ class ListConversationFile extends Component {
         link.click();
     }
 
-    handleGetPopupImg = () => {console.log('click en la imagen  ');
-    //MaginificPopup.trigger('.popup-img', 'open');
-        //const magnificPopup = require('../../assets/libs/magnific-popup/jquery.magnific-popup.min.js');
-        
+    handleGetPopupImg = () => {
         $(".popup-img").magnificPopup({
+            items: {
+                src: this.state.srcFile
+            },
             type: "image",
-            closeOnContentClick: !0,
+            tClose: 'Close (Esc)',
+            tLoading: 'Loading...',            
+            //closeOnContentClick: !0,
             mainClass: "mfp-img-mobile",
             image: { verticalFit: !0 }
-        });
+        }).magnificPopup('open');
     }
 
     imagen =()=>{
