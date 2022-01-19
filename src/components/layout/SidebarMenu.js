@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
 import Logout from './Logout.js';
 import {IMG} from '../lib/Lib';
+import {ModalBasic, ModalLink} from '../helpers/Modal';
 
 class SidebarMenu extends Component{
 
     state = ({
         token:localStorage.getItem('token'),
+        show:false
     });
 
     sidebarMenu=()=>{
@@ -54,8 +56,11 @@ class SidebarMenu extends Component{
                     </li>
                     <li className="nav-item" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Settings">
                         <a className="nav-link" id="pills-setting-tab" data-toggle="pill" href="#pills-setting" role="tab">
-                            <i className="ri-settings-2-line"></i>
+                            <i className="ri-settings-3-line"></i>
                         </a>
+                    </li>
+                    <li className="nav-item" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Nuevo radicado">
+                        <ModalLink show={false} backdrop="static" size="xl" icono="ri-add-circle-line" title="Nuevo radicado" />
                     </li>
                     <li className="nav-item dropdown profile-user-dropdown d-inline-block d-lg-none">
                         <a className="nav-link dropdown-toggle" href="/#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -65,7 +70,7 @@ class SidebarMenu extends Component{
                             <a className="dropdown-item" href="/#">Perfil <i className="ri-profile-line float-right text-muted"></i></a>
                             <a className="dropdown-item" href="/#">Config. <i className="ri-settings-3-line float-right text-muted"></i></a>
                             <div className="dropdown-divider"></div>
-                            <Logout></Logout>
+                            <Logout />
                         </div>
                     </li>
                 </ul>

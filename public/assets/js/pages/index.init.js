@@ -19,7 +19,7 @@ $(document).ready(function() {
             $(".user-profile-sidebar").show()
         }),
 
-        $(".chat-user-list li a").click(function() {
+        $(".chat-user-list li a").click(function() {console.log('abriendo chat');
             $(".user-chat").addClass("user-chat-show")
         }),
 
