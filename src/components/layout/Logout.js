@@ -1,6 +1,6 @@
 import { Component, React } from "react";
 import axios from 'axios';
-import {headers, API} from '../lib/Lib';
+import {headers, API, cookies} from '../lib/Lib';
 
 class Logout extends Component{
    
@@ -8,7 +8,8 @@ class Logout extends Component{
         e.preventDefault();
         axios.get(API.urlApi+'logout', headers).then(response => {
             if(response.data.res){
-                localStorage.clear();
+                cookies.remove('usuario_id', {path: "/"});
+                cookies.remove('token', {path: "/"});
                 window.location.href='/';
             }else{            
                 console.log('error 00010x');

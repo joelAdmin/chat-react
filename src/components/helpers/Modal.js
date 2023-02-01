@@ -21,14 +21,14 @@ export const ModalLink = function ModalBasic(props) {
           <Modal.Header closeButton>
             <Modal.Title>{props.title}</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Woohoo, youre reading this text in a modal!</Modal.Body>
+          <Modal.Body>{props.body}</Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
-              Close
+              Cerrar
             </Button>
-            <Button variant="primary" onClick={handleClose}>
-              Save Changes
-            </Button>
+            {/*<Button variant="primary" onClick={handleClose}>
+                      Save Changes
+            </Button>*/}
           </Modal.Footer>
         </Modal>
       </>

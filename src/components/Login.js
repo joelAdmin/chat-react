@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import '../assets/css/login.css';
 import axios from 'axios';
 import Alert from './bootstrap/Alert.js';
-import {validator, API} from './lib/Lib';
+import {validator, API, cookies} from './lib/Lib';
 
 class Login extends Component {
 
@@ -20,7 +20,10 @@ class Login extends Component {
         });
     }
     
-
+    /**
+     * Actualizar el valor de los inputs
+     * @param {*} event 
+     */
     handleChange = async (event) =>{
         await this.setState({
             form:{
@@ -30,7 +33,12 @@ class Login extends Component {
         });
     }
 
-
+    /**
+     * Función encargada de actualizar las variables
+     * de estado de error para ser enviadas como props en 
+     * el componente @class Alert
+     * @param {*} message mensaje a mostrar
+     */
     getMessage =(message)=> {
         this.setState({
             error:true,
@@ -41,18 +49,36 @@ class Login extends Component {
         }, 5000);  
     }
 
+    /**
+     * Función que consulta el recurso login de la api  
+     * pasando las variables de estados para validar la
+     * sesión del usuario
+     * @param {*} event para evitar recargar la pagina
+     */
     handleSubmit = (event) => {
         event.preventDefault();
-        //console.log('enviando');
-        axios.post(API.urlApi+'login', this.state.form).then(response => {            
+        console.log(process.env);
+        axios.post(process.env.REACT_APP_URL_API+'login', this.state.form).then(response => {            
             if(response.data.res){
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('usuario_id', response.data.user.usuario_id);
+                /**
+                 * si obtendo una respuesta creo las cookies 
+                 * con el token de sesiòn y redirecciono a /
+                 */
+                cookies.set('token', response.data.token, { path: '/' });
+                cookies.set('usuario_id', response.data.user.usuario_id, { path: '/' });
                 window.location.href = '/';
             }else{
-                validator(response.data.errors, '.loginForm')
+                /**
+                 * en caso de no tener respuesta muestro los mensajes 
+                 * de error que vienen en el objeto response.data
+                 * donde @property {data.errors} contiene los errores de los inpust generados 
+                 * desde la configuración del modelo y @property {data.message} es un mensaje 
+                 * personalizado en caso de no ingresar los credenciales correctos.
+                 */
+
+                validator(response.data.errors, '.loginForm');
                 if(response.data.message){                
-                   this.getMessage(response.data.message) 
+                   this.getMessage(response.data.message);
                 }   
             }        
         }).catch(error => {
@@ -60,6 +86,10 @@ class Login extends Component {
         });        
     }
 
+    /**
+     * 
+     * @returns código jsx formulario login
+     */
     render(){
         return (
             <div className="container-fluid px-1 px-md-5 px-lg-1 px-xl-5 py-5 mx-auto">                
@@ -77,6 +107,10 @@ class Login extends Component {
                         </div>
                         <div className="col-lg-6">
                             <div className="card2 card border-0 px-4 py-5">
+                                {/* En el formulario asociamos el evento onSubmit
+                                con la funcion handleSubmit() que consume 
+                                el recurso login para validar los datos de inicio de sesion
+                                en el backend */}
                                 <form className="loginForm" onSubmit={this.handleSubmit} >
                                     <div className="row mb-4 px-3">
                                         <h6 className="mb-0 mr-4 mt-2">Sign in with</h6>
@@ -95,6 +129,9 @@ class Login extends Component {
                                         <small className="or text-center">Or</small>
                                         <div className="line"></div>
                                     </div>
+
+                                    {/* validamos si la variable de estado de error es verdadera
+                                     para mostrar mensaje de error haciendo uso del componente Alert */}
                                     {this.state.error === true &&
                                         <Alert theme={this.state.theme} show={this.state.error} title={this.state.title} message={this.state.errorMessage} />
                                     }
@@ -103,6 +140,10 @@ class Login extends Component {
                                         <label  htmlFor="firname" className="mb-1">
                                             <h6 className="mb-0 text-sm">Email Address</h6>
                                         </label> 
+                                        {/* En los input del formulario asociamos el evento onChange
+                                            con la funcion handleChange() que consume 
+                                            que se mantiene escuchado las actualizaciones de los inputs
+                                         */}
                                         <input className="mb-0" type="text" name="email" placeholder="Enter a valid email address" onChange={this.handleChange} /> 
                                         <span id="error_email" className="email text-danger mt-0 mb-2"></span>
                                     </div>
@@ -120,7 +161,7 @@ class Login extends Component {
                                         <a href="/#" className="ml-auto mb-0 text-sm">Forgot Password?</a>
                                     </div>
                                     <div className="row mb-3 px-3"> <button type="submit" className="btn btn-blue text-center">Login</button> </div>
-                                    <div className="row mb-4 px-3"> <small className="font-weight-bold">Dont have an account? <a href="/#" className="text-danger ">Register</a></small> </div>
+                                    <div className="row mb-4 px-3"> <small className="font-weight-bold">Dont have an account? <a href="/#" onClick={this.handleSubmitLista      } className="text-danger ">Register</a></small> </div>
                                 </form>
                             </div>
                         </div>

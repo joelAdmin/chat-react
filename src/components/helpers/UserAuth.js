@@ -1,10 +1,10 @@
-import {API, headers} from '../lib/Lib';
+import {API, headers, cookies} from '../lib/Lib';
 
-const getuserAuth = async () =>{
-    const user_id = localStorage.getItem('usuario_id');
-    const result = await fetch(API.urlApi+'user/'+user_id, headers);
-    const data = await result.json();
-    return data;
+export const getuserAuth = async () =>{
+    const user_id = cookies.get('usuario_id');
+    let user = '';
+    await fetch(API.urlApi+'user/'+user_id, headers).then(response=>response.json()).then(data => {
+        user = data
+    })
+    return user;
 }
-
-export default getuserAuth;

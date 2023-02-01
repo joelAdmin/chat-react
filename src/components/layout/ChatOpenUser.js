@@ -1,8 +1,8 @@
 import React, {Component} from "react";
 import axios from "axios";
 import {API, IMG, TIMERMESSAGE, headers} from '../lib/Lib';
-//import getConversations from '../helpers/Conversations'
-import getChatsU from '../helpers/ChatsU';
+//import {getConversations} from '../helpers/Conversations';
+//import {getChatsU} from '../helpers/Chat';
 
 
 class ChatOpenUser extends Component {
@@ -46,11 +46,9 @@ class ChatOpenUser extends Component {
                 userTo:userTo
             });           
         }
-
-        //console.log( this.state.userTo) 
     }
 
-    openConversation = (chat_id) =>{
+    openConversation = async (chat_id) => {
         this.props.parent.openchatCallback(true, chat_id);
         this.props.parent.conversationsCallback([]);
         this.updateUserTo([]);

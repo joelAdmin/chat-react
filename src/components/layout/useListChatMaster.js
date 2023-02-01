@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from "react";
 //import axios from "axios";
 import {IMG, TIMERMESSAGE} from '../lib/Lib';
-import getChatsM from '../helpers/ChatsM';
-import getSubChats from '../helpers/SubChatsM';
-import getConversations from '../helpers/Conversations';
+import {getChatsM, getSubChats} from '../helpers/Chat';
+import {getConversations} from '../helpers/Conversations';
 import {random} from '../lib/Lib';
 
 export default function useListChatMaster(props){

@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import Logout from './Logout.js';
-import {IMG} from '../lib/Lib';
-import {ModalBasic, ModalLink} from '../helpers/Modal';
+import {IMG, cookies} from '../lib/Lib';
+import {ModalLink} from '../helpers/Modal';
+import {NewConsulta} from '../forms/Consulta';
 
 class SidebarMenu extends Component{
 
     state = ({
-        token:localStorage.getItem('token'),
+        token:cookies.get('token'),
         show:false
     });
 
@@ -60,7 +61,7 @@ class SidebarMenu extends Component{
                         </a>
                     </li>
                     <li className="nav-item" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Nuevo radicado">
-                        <ModalLink show={false} backdrop="static" size="xl" icono="ri-add-circle-line" title="Nuevo radicado" />
+                        <ModalLink show={false} body={<NewConsulta />} backdrop="static" size="xl" icono="ri-add-circle-line" title="Nuevo radicado" />
                     </li>
                     <li className="nav-item dropdown profile-user-dropdown d-inline-block d-lg-none">
                         <a className="nav-link dropdown-toggle" href="/#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

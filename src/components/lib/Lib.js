@@ -1,12 +1,14 @@
 import React, { Component }  from 'react';
 import Pusher from "pusher-js";
 import Echo from "laravel-echo";
+import Cookies from 'universal-cookie';
+
+export const cookies = new Cookies();
 
 export const validator =(responseErrors, classFrom)=>{
     const forms = document.querySelectorAll(classFrom);
     const form  = forms[0];
     if(Object.keys(responseErrors).length > 0){[...form.elements].forEach((input) => {
-            //console.log(input.name);
             if(input.name !== ''){
                 document.getElementsByClassName(input.name)[0].innerHTML= '';
             }                                             
@@ -14,7 +16,6 @@ export const validator =(responseErrors, classFrom)=>{
 
         Object.entries(responseErrors).forEach(entry => {
             const [key, value] = entry;
-            //console.log(key, value);
             if(key !== ''){
                 document.getElementsByClassName(key)[0].innerHTML= value;
             }
@@ -22,7 +23,6 @@ export const validator =(responseErrors, classFrom)=>{
     }else
     {
         [...form.elements].forEach((input) => {
-            //console.log(input.name);
             if(input.name !== ''){
                 document.getElementsByClassName(input.name)[0].innerHTML= '';
             }                                             
@@ -31,23 +31,23 @@ export const validator =(responseErrors, classFrom)=>{
 }
 
 export const ECHO = new Echo({
-    broadcaster: "pusher",    
-    key: "141115",
-    cluster: 'mt1',
-    //authEndpoint: "Access-Control-Allow-Origin: https://wss.jlssystem.com/api/broadcasting/auth",
-    //authEndpoint: "Access-Control-Allow-Origin: http://localhost:8001/api/broadcasting/auth",
-    authEndpoint: "https://api-alp.jlssystem.com/api/broadcasting/auth",
-    wsHost: 'wss.jlssystem.com',
-    wsPort: 6001,
-    wssPort: 6001,
-    forceTLS: true,
-    encrypted: true,
-    disableStats: true,
+    broadcaster:process.env.REACT_APP_BROADCASTER,    
+    key:process.env.REACT_APP_KEY,
+    cluster:process.env.REACT_APP_CLUSTER,
+    //authEndpoint: "",
+    //authEndpoint: "",
+    authEndpoint:process.env.REACT_APP_AUTH_END_POINT,
+    wsHost:process.env.REACT_APP_WS_HOST,
+    wsPort:process.env.REACT_APP_WS_PORT,
+    wssPort:process.env.REACT_APP_WSS_PORT,
+    forceTLS:process.env.REACT_APP_FORCE_TLS,
+    encrypted:process.env.REACT_APP_ENCRYPTED,
+    disableStats:process.env.REACT_APP_DISABLE_STATS,
     enabledTransports: ['wss', 'ws'],
     auth: {
         headers: {
-           Authorization: "Bearer " + localStorage.getItem('token'),
-           Accept: 'application/json',
+           Authorization: "Bearer " +cookies.get('token'),
+           Accept:process.env.REACT_APP_AUTH_HEADERS_ACCEPT,
         }
     },
 })
@@ -63,7 +63,7 @@ export const random = () =>{
 export const headers = {
     headers: {
       accept: 'application/json',
-      Authorization: 'Bearer '+localStorage.getItem('token')
+      Authorization: 'Bearer '+cookies.get('token')
     },
     data: {},
 }
@@ -73,7 +73,7 @@ export const headersBlod = {
     headers: {
       responseType: 'blob',
       accept: 'application/json',
-      Authorization: 'Bearer '+localStorage.getItem('token')
+      Authorization: 'Bearer '+cookies.get('token')
     },
     data: {},
 }
@@ -83,17 +83,28 @@ export const headersPost = {
     headers: {
       method:'POST',
       accept: 'application/json',
-      Authorization: 'Bearer '+localStorage.getItem('token')
+      Authorization: 'Bearer '+cookies.get('token')
     },
     data: {},
 }
 
 //config API
+/** Constante ya en .env 
+ * Eliminar llamado: en proceso
+ */
 export const API = {
     urlApi:'https://api-alp.jlssystem.com/api/',
     urlSocket:'https://api-alp.jlssystem.com',
     title:'API REST JL®',
-    toke:localStorage.getItem('token')
+    toke:cookies.get('token')
+}
+
+//config API
+export const API2 = {
+    urlApi:'http://qa-nexura.com/api/',
+    urlSocket:'https://qa-nexura.com',
+    title:'API REST JL®',
+    toke:cookies.get('token')
 }
 
 //image default
