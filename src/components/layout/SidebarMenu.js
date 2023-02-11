@@ -1,28 +1,32 @@
-import React, {Component} from 'react';
+import React, {useEffect, userState, useState} from 'react';
 import Logout from './Logout.js';
 import {IMG, cookies} from '../lib/Lib';
 import {ModalLink} from '../helpers/Modal';
 import {NewConsulta} from '../forms/Consulta';
 
-class SidebarMenu extends Component{
+//acceder a los hooks de redux toolkit para 
+import {useSelector, useDispatch} from 'react-redux';
+//importar mis Slice definidos 
+import {setLogin} from '../../features/user/loginSlice';
 
-    state = ({
-        token:cookies.get('token'),
-        show:false
-    });
+const SidebarMenu = (props) => {
 
-    sidebarMenu=()=>{
-        return (
-        <div onClick={this.props.callbackCloseEmjoi} className="side-menu flex-lg-column mr-lg-1">
+    const token = cookies.get('token');
+    const [show, setShow] = useState(false);
+
+    const userAuth = useSelector((state) => state.login);
+
+    return (
+        <div onClick={props.callbackCloseEmjoi} className="side-menu flex-lg-column mr-lg-1">
             {/* LOGO */}
             <div className="navbar-brand-box">
-                <a href="index.html" className="logo logo-dark">
+                <a href="/" className="logo logo-dark">
                     <span className="logo-sm">
                         <img src="assets/images/logo.svg" alt="" height="30" />
                     </span>
                 </a>
 
-                <a href="index.html" className="logo logo-light">
+                <a href="/" className="logo logo-light">
                     <span className="logo-sm">
                         <img src="assets/images/logo.svg" alt="" height="30"/>
                     </span>
@@ -60,12 +64,18 @@ class SidebarMenu extends Component{
                             <i className="ri-settings-3-line"></i>
                         </a>
                     </li>
-                    <li className="nav-item" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Nuevo radicado">
-                        <ModalLink show={false} body={<NewConsulta />} backdrop="static" size="xl" icono="ri-add-circle-line" title="Nuevo radicado" />
-                    </li>
+                    {userAuth.access === 'Mg==' &&                    
+                        <li className="nav-item" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Nuevo radicado">
+                            {/* <ModalLink /> Componente encargado de renderizar un enlace con el evento onclick de desplegar una
+                                ventana modal de bootstrap a la vez recibe un componente para mostrar en el body del modal mediante
+                                la props body
+                            */}
+                            <ModalLink show={false} body={<NewConsulta />} backdrop="static" size="xl" icono="ri-add-circle-line" title="Nuevo radicado" />
+                        </li>
+                    }
                     <li className="nav-item dropdown profile-user-dropdown d-inline-block d-lg-none">
                         <a className="nav-link dropdown-toggle" href="/#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img src={this.props.auth.avatar !== '' ? this.props.auth.avatar : IMG} alt="" className="profile-user rounded-circle"/>
+                            <img src={props.auth.avatar !== '' ? props.auth.avatar : IMG} alt="" className="profile-user rounded-circle"/>
                         </a>
                         <div className="dropdown-menu">
                             <a className="dropdown-item" href="/#">Perfil <i className="ri-profile-line float-right text-muted"></i></a>
@@ -88,7 +98,7 @@ class SidebarMenu extends Component{
 
                     <li className="nav-item btn-group dropup profile-user-dropdown">
                         <a href="/#" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown"  aria-expanded="false">
-                            <img src={this.props.auth.avatar !== '' ? this.props.auth.avatar : IMG} alt="" className="profile-user rounded-circle"/>
+                            <img src={props.auth.avatar !== '' ? props.auth.avatar : IMG} alt="" className="profile-user rounded-circle"/>
                         </a>
                         <div className="dropdown-menu">
                             <a className="dropdown-item" href="/#">Perfil <i className="ri-profile-line float-right text-muted"></i></a>
@@ -101,11 +111,7 @@ class SidebarMenu extends Component{
             </div>
             {/* Side menu user */}
         </div>
-        );
-    }
-
-    render(){
-        return(this.sidebarMenu());
-    }
+    );
 }
+
 export default SidebarMenu;

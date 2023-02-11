@@ -5,6 +5,14 @@ import Cookies from 'universal-cookie';
 
 export const cookies = new Cookies();
 
+export const isAuth = () => {
+    if(cookies.get('token') !== undefined && cookies.get('token')){
+        return true;
+    }else{
+        return false;
+    }
+}
+
 export const validator =(responseErrors, classFrom)=>{
     const forms = document.querySelectorAll(classFrom);
     const form  = forms[0];

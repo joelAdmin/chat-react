@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Button, Form} from 'react-bootstrap'
+import {Button, Form} from 'react-bootstrap';
+import { Dropdown, TextInput } from "../helpers/FormsComponents";
 
 export const NewConsulta =()=> {
     const [form, setForm] = useState({});
@@ -13,55 +14,84 @@ export const NewConsulta =()=> {
         console.log('form:', form);
     }
 
-    const Dropdown = ({
-        options = [
-            { label: "last hour", value: "hour" },
-            { label: "last day", value: "day" },
-            { label: "last week", value: "week" },
-            { label: "last month", value: "month" },
-            { label: "last year", value: "year" }
-          ]
-      }) => {
-        const [selectedOption, setSelectedOption] = useState(options[0].value);
-        return (
-            <select className="form-control"
-              value={selectedOption}
-              onChange={e => setSelectedOption(e.target.value)}>
-              {options.map(o => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
-        );
-    };
-
     return (<>
         <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="type">
-                <Form.Label>Seleccionar tipo de consulta</Form.Label>
-                <Dropdown />
+            <Form.Group className="mb-3" controlId="type">               
+                <Dropdown title="Por favor, seleccionar tipo de consulta" 
+                label="Seleccionar tipo de consulta"
+                name="tipo"
+                id="tipo"
+                placeholder="Seleccionar aqui"
+                options={
+                        [
+                            { label: "lasts hours", value: "hour" },
+                            { label: "lasts days", value: "day" },
+                            { label: "lasts weeks", value: "week" },
+                            { label: "lasts months", value: "month" },
+                            { label: "lasts years", value: "year" }
+                        ]
+                    } 
+                />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Asunto</Form.Label>
-                <Form.Control type="text" onChange={handleChange} name="asunto" placeholder="Ingresar asunto" />
-                <Form.Text className="text-muted">
-                Well never share your email with anyone else.
-                </Form.Text>
+                <TextInput 
+                label        = "Asunto" 
+                title        = "Por favor, ingresar asunto" 
+                handleChange = {handleChange}
+                name         = "asunto"
+                id           = "asunto"  
+                textMini     = {[
+                        {class : "text-danger"},
+                        {text  : ""}
+                    ]
+                }
+                />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Label>Nombre completo</Form.Label>
-                <Form.Control type="text" name="nombre" onChange={handleChange} placeholder="Ingresar nombre" />
+                <TextInput 
+                label        = "Nombre completo" 
+                title        = "Por favor, ingresar Nombre completo" 
+                handleChange = {handleChange}
+                name         = "nombre"
+                id           = "nombre"  
+                textMini     = {[
+                        {class : "text-danger"},
+                        {text  : ""}
+                    ]
+                }
+                />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicContacto">
-                <Form.Label>Número de contacto</Form.Label>
-                <Form.Control type="text" name="numero" onChange={handleChange} placeholder="Ingresar número" />
+                <TextInput 
+                label        = "Número de contacto" 
+                title        = "Por favor, ingresar número de contacto" 
+                handleChange = {handleChange}
+                name         = "telefono"
+                id           = "telefono"  
+                textMini     = {[
+                        {class : "text-danger"},
+                        {text  : ""}
+                    ]
+                }
+                />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicCargo">
-                <Form.Label>Cargo</Form.Label>
-                <Form.Control type="text" name="cargo" onChange={handleChange} placeholder="Ingresar cargo" />
+                <TextInput 
+                label        = "Cargo" 
+                title        = "Por favor, ingresar cargo" 
+                handleChange = {handleChange}
+                name         = "Cargo"
+                id           = "Cargo"  
+                textMini     = {[
+                        {class : "text-danger"},
+                        {text  : ""}
+                    ]
+                }
+                />
             </Form.Group>
             
             <Button variant="primary" type="submit">

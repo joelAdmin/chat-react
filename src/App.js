@@ -1,64 +1,70 @@
 //import logo from './logo.svg';
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import Base from './components/Base.js';
 import Login from './components/Login';
-import {cookies, clearCookies} from './components/lib/Lib';
+import {isAuth, cookies, clearCookies} from './components/lib/Lib';  
+import {getuserAuth} from './components/helpers/UserAuth';
 
-class App extends Component{
+//acceder a los hooks de redux toolkit para 
+import {useDispatch} from 'react-redux';
+//importar mis Slice definidos 
+import {setLogin} from './features/user/loginSlice';
 
-  constructor(props){
-    super(props);
-    this.state =({
-      user:{},
-      token:''
-    });
+const App = () => {
 
+  const dispatch = useDispatch();
+
+  const addStoreInfoUser = () => {
+    getuserAuth().then(response => {
+      dispatch(setLogin({
+        access:response.access,
+        usuarioId:4,
+        user:response.result
+      }));      
+    });	
   }
+
+  useEffect(() => {
+    loadRender()
+    if(isAuth()){
+      addStoreInfoUser()
+    }
+  }, []);	
   
   /**
    * @param params contiene todas las props
    * @returns componete base con cada una de las
-   * partes que conforma el app plantilla
+   *  partes que conforma el app plantilla
    */
-
-  app =()=> {    
-    return (<Base params={this.props}></Base>);
+  
+  const base = (props) => {   
+    return (<Base params={props}></Base>);
   }
 
   /**
    * @param params contiene todas las props
    * @returns componete con formulario para inicio sesión
    */
-  login =()=> {
-    return (<Login params={this.props} />);
+  const login = (props) => {
+    return (<Login params={props} />);
   }
 
-  loadRender =()=>{
-    /*
-    if (localStorage){
-      if(localStorage.getItem('token') !== undefined && localStorage.getItem('token')){
-        return (this.app());
-      }else{
-        return (this.login());
-      }
-    }
-    console.log('validando si existe el token');*/
-
+  const loadRender = () => {
     /**
      * Comprobamos si tenemos una cookies con el token generado desde la api del backen
      * de lo contrario renderizamos el componete login que nos muestra un formulario
      * para iniciar sesión.
      */
-    if(cookies.get('token') !== undefined && cookies.get('token')){
-      return (this.app());
+    if(isAuth()){
+      return (base());
     }else{
-      return (this.login());
+      return (login());
     }
   }
 
-  render(){
-    return(this.loadRender());
-  }
+  return (loadRender());
 }
+  
+
 export default App;
