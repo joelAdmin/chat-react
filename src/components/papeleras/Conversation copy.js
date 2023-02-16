@@ -1,60 +1,54 @@
-import React, {useState, useEffect} from 'react';
+import React, {Component} from 'react';
 import ListConversation from './ListConversation.js';
 import ListConversationFile from './ListConversationFile.js';
 import ListConversationAudio from './ListConversationAudio.js';
 import FooterChatOpen from './FooterChatOpen.js';
 import HeadChatOpen from './HeadChatOpen.js';
 import {IMG, random, API, headers} from '../lib/Lib';
-import {SpinnerLoading as SpinnerLoad} from '../helpers/SpinnerLoading';
 import axios from 'axios';
 
 import $ from 'jquery';
 
-import {loading} from '../../features/user/chatSlice';
-import {getConversation} from '../../features/user/conversationSlice';
+class Conversation extends Component{
 
+    constructor(props){
+        console.log('....cargando conversation');
+        super(props);
+        this.state = {
+            form:{
+                mensaje:'',
+                emisor_id: 0,
+                receptor_id:0,
+                chat_id:0
+            }, 
+            emojiTextoValue:''
+        };        
+       // this.updatehidden();
+    }
 
-import {useSelector, useDispatch} from 'react-redux';
+    componentDidMount(){
+        console.log(this.props);
+        this.loading();
+    }
 
-const Conversation = (props) => { 
-
-    const estado = useSelector((state) => state);
-    const dispatch = useDispatch();
-
-    const [form, setForm] = useState({
-        mensaje:'',
-        emisor_id: 0,
-        receptor_id:0,
-        chat_id:0
-    });
-
-    const [emojiTextoValue, setEmojiTextoValue] = useState('');
-    const [chatId, setChatId] = useState(0);    
-
-    useEffect(() => {          
-        /**
-         * solo se ejecuta cuando hacemos click en open chat
-         * estado.chat.loading viene en false desde useLisChatMaster
-         * useLisChatMaster
-         * */
-       
-        if((estado.chat.openChat.open && !estado.chat.loading) && (chatId != estado.chat.openChat.chat_id)){
-            dispatch(loading(true));
-            topScroll();
-        }        
-    }, [estado.conversation.getConversation]);
-
-    const loadingFuntion = () =>{
-        if(estado.chat.openChat.open === true){
+    loading =()=>{
+        if(this.props.parent.chatopen.open === true){
+            console.log('cargando conversation');
             document.getElementById('loading').innerHTML='';
         }
     }
 
-    const topScroll = (validate) => { 
-            
-        if(validate){
-            if(estado.chat.openChat.open){
-                if(estado.conversation.getConversation.length > 0){                    
+    componentDidUpdate(){
+        this.topScroll(true);
+        //this.updatehidden();        
+        //console.log('constructor', Object(this.props.userTo).usuario_id);
+        //console.log('props:', this.props);
+    }
+
+    topScroll =(validate)=>{        
+        if(validate === true){
+            if(this.props.parent.chatopen.open === true){
+                if(this.props.conversations.length > 0){
                     setTimeout(function(){
                         var scroll = document.querySelector('#chat-conversation .simplebar-content-wrapper');
                         $('#chat-conversation .simplebar-content-wrapper').animate( {scrollTop : scroll.scrollHeight}, 900 );
@@ -62,7 +56,7 @@ const Conversation = (props) => {
                 }
             }
         }else{
-            if(estado.conversation.getConversation.length > 0){
+            if(this.props.conversations.length > 0){
                 setTimeout(function(){
                     var scroll = document.querySelector('#chat-conversation .simplebar-content-wrapper');
                     $('#chat-conversation .simplebar-content-wrapper').animate( {scrollTop : scroll.scrollHeight}, 900 );
@@ -71,29 +65,40 @@ const Conversation = (props) => {
         }        
     }
 
-    const showProfile = () => {
+    showProfile =()=>{
         $('.user-profile-sidebar').show();
     }
 
-    const handleSendMessage = (value) => {
-        setForm({
-            emisor_id:props.parent.chatopen.emisor_id,
-            receptor_id:Object(props.parent.userTo).usuario_id,
-            chat_id:props.parent.chatopen.chat_id,
-            mensaje:value });
-        setEmojiTextoValue(value);
-    }
-
-    const handleSendMessageAudio = () => {
-         setForm({
-            emisor_id:props.parent.chatopen.emisor_id,
-            receptor_id:Object(props.parent.userTo).usuario_id,
-            chat_id:props.parent.chatopen.chat_id,
-            mensaje:''
+    handleSendMessage = (value)=>{
+       this.setState({
+            /*form:{
+                emisor_id:this.props.parent.chatopen.emisor_id,
+                receptor_id:Object(this.props.parent.userTo).usuario_id,
+                chat_id:this.props.parent.chatopen.chat_id,
+                [e.target.name]:e.target.value
+            }*/
+            form:{
+                emisor_id:this.props.parent.chatopen.emisor_id,
+                receptor_id:Object(this.props.parent.userTo).usuario_id,
+                chat_id:this.props.parent.chatopen.chat_id,
+                mensaje:value
+            },
+            emojiTextoValue:value
         });
     }
 
-    const htmlMessageTemp =(vrandom,avatar, text) => {
+    handleSendMessageAudio = ()=>{
+        this.setState({
+             form:{
+                 emisor_id:this.props.parent.chatopen.emisor_id,
+                 receptor_id:Object(this.props.parent.userTo).usuario_id,
+                 chat_id:this.props.parent.chatopen.chat_id,
+                 mensaje:''
+             }
+         });
+    }
+
+    htmlMessageTemp =(vrandom,avatar, text)=>{
         const texto   =  '<li id="new'+vrandom+'" class="right" style="list-style:none; display:none;">'+
                             '<div class="conversation-list">'+
                                 '<div class="chat-avatar">'+
@@ -122,17 +127,17 @@ const Conversation = (props) => {
         return texto;
     }
 
-    const handleSubmit = (event) => {
+    handleSubmit = (event) => {
         const vrandom = random();
         event.preventDefault();
-        const text = htmlMessageTemp(vrandom, props.parent.userAuth.avatar, form.mensaje);
-        if( form.mensaje.length > 0){       
+        const text = this.htmlMessageTemp(vrandom, this.props.parent.userAuth.avatar, this.state.form.mensaje);
+        if( this.state.form.mensaje.length > 0){       
             $("#chat-conversation-list").append(text);
             $('#new'+vrandom).toggle({height:1000});
-            handleSendMessage('');             
-            axios.post(API.urlApi+'sendMessage', form, headers).then(response => {            
+            this.handleSendMessage('');             
+            axios.post(API.urlApi+'sendMessage', this.state.form, headers).then(response => {            
                 if(response.data.res){
-                    //conversation();
+                    this.conversation();
                 }else{
                     console.log('error en guardado de mensaje');
                 }      
@@ -142,8 +147,8 @@ const Conversation = (props) => {
         }
     }
 
-    const renderHeadChatOpen = () => {
-        return (<React.Fragment>{props.conversations.length > 0 &&                    
+    renderHeadChatOpen = () => {
+        return (<React.Fragment>{this.props.conversations.length > 0 &&                    
             <div className="row align-items-center">
                 <div className="col-sm-4 col-8">
                     <div className="media align-items-center">
@@ -151,12 +156,12 @@ const Conversation = (props) => {
                             <a href="/#" className="user-chat-remove text-muted font-size-16 p-2"><i className="ri-arrow-left-s-line"></i></a>
                         </div>
                         <div className="mr-3">
-                            {Object(props.userTo).nombre !== 'undefined' &&
-                                <img src={(Object(props.userTo).avatar !== null) ? Object(props.userTo).avatar : IMG} className="rounded-circle avatar-xs" alt="" />
+                            {Object(this.props.userTo).nombre !== 'undefined' &&
+                                <img src={(Object(this.props.userTo).avatar !== null) ? Object(this.props.userTo).avatar : IMG} className="rounded-circle avatar-xs" alt="" />
                             }                                            
                         </div>
-                        <div className="media-body overflow-hidden">{props.parent.openchat===true && <b>gggggg</b>}
-                            <h5 className="font-size-16 mb-0 text-truncate"><a href="/#" onClick={showProfile} className="text-reset user-profile-show">{Object(props.userTo).nombre} {Object(props.userTo).apellido}</a> <i className="ri-record-circle-fill font-size-10 text-success d-inline-block ml-1"></i></h5>
+                        <div className="media-body overflow-hidden">{this.props.parent.openchat===true && <b>gggggg</b>}
+                            <h5 className="font-size-16 mb-0 text-truncate"><a href="/#" onClick={this.showProfile} className="text-reset user-profile-show">{Object(this.props.userTo).nombre} {Object(this.props.userTo).apellido}</a> <i className="ri-record-circle-fill font-size-10 text-success d-inline-block ml-1"></i></h5>
                         </div>
                     </div>
                 </div>
@@ -198,7 +203,8 @@ const Conversation = (props) => {
         } </React.Fragment>);
     }
 
-    const handleHideViewUserTo = () => {
+    handleHideViewUserTo = () => {
+        console.log('click ...');
         if($('#to-user-profile-sidebar').css('display')=='none'){
             $('#to-user-profile-sidebar').show(200);
         }else{
@@ -206,22 +212,22 @@ const Conversation = (props) => {
         }
     }
 
-    const renderUserProfileSidebar = () => {
+    renderUserProfileSidebar = () => {
         return (<React.Fragment>
             {/* start profile user */}
             <div className="px-3 px-lg-4 pt-3 pt-lg-4">
                 <div className="user-chat-nav text-right">
-                    <button type="button" onClick={handleHideViewUserTo} className="btn nav-btn" id="user-profile-hide">
+                    <button type="button" onClick={this.handleHideViewUserTo} className="btn nav-btn" id="user-profile-hide">
                         <i className="ri-close-line"></i>
                     </button>
                 </div>
             </div>
             <div className="text-center p-4 border-bottom">
                 <div className="mb-4">
-                    <img src={(Object(props.userTo).avatar !== null) ? Object(props.userTo).avatar : IMG} className="rounded-circle avatar-lg img-thumbnail" alt="" />
+                    <img src={(Object(this.props.userTo).avatar !== null) ? Object(this.props.userTo).avatar : IMG} className="rounded-circle avatar-lg img-thumbnail" alt="" />
                 </div>
 
-                <h5 className="font-size-16 mb-1 text-truncate">{Object(props.userTo).nombre} {Object(props.userTo).apellido}</h5>
+                <h5 className="font-size-16 mb-1 text-truncate">{Object(this.props.userTo).nombre} {Object(this.props.userTo).apellido}</h5>
                 <p className="text-muted text-truncate mb-1"><i className="ri-record-circle-fill font-size-10 text-success mr-1"></i> Active</p>
             </div>
             {/* End profile user */}
@@ -251,12 +257,12 @@ const Conversation = (props) => {
 
                                 <div>
                                     <p className="text-muted mb-1">Name</p>
-                                    <h5 className="font-size-14">{Object(props.userTo).nombre} {Object(props.userTo).apellido}</h5>
+                                    <h5 className="font-size-14">{Object(this.props.userTo).nombre} {Object(this.props.userTo).apellido}</h5>
                                 </div>
 
                                 <div className="mt-4">
                                     <p className="text-muted mb-1">Email</p>
-                                    <h5 className="font-size-14">{Object(props.userTo).email}</h5>
+                                    <h5 className="font-size-14">{Object(this.props.userTo).email}</h5>
                                 </div>
 
                                 <div className="mt-4">
@@ -281,148 +287,70 @@ const Conversation = (props) => {
         </React.Fragment>);
     }
 
-    const renderListConversations = () => {
+    renderListConversations = () => {
         return (<React.Fragment>
-            {estado.conversation.getConversation.length > 0 &&
-                <div id="chat-conversation" onClick={props.callbackCloseEmjoi} className="chat-conversation p-3 p-lg-4" data-simplebar="init">SI
+            {(this.props.conversations.length > 0 ) &&
+                <div id="chat-conversation" onClick={this.props.callbackCloseEmjoi} className="chat-conversation p-3 p-lg-4" data-simplebar="init">
                     <ul id="chat-conversation-list" className="list-unstyled mb-0">  
-                        {Object.values(estado.conversation.getConversation).map((values, key) => {
+                        {Object.values(this.props.conversations).map((values, key) => {
                             if(values.ogg === null){
                                 if(values.attachment === 0){
-                                    return <ListConversation  key={key} values={values} {...props} />
+                                    return <ListConversation  key={key} values={values} {...this.props} />
                                 }else{
-                                    return <ListConversationFile key={key} values={values} {...props} />
+                                    return <ListConversationFile key={key} values={values} {...this.props} />
                                 }
                             }else{
-                                return <ListConversationAudio  key={key} values={values} {...props} />                                                                                          
+                                return <ListConversationAudio  key={key} values={values} {...this.props} />                                                                                          
                             }
                         })}
                     </ul>
-                </div>                           
+                </div>                            
+            }
+            {this.props.conversations.length < 1 &&
+                <div id="chat-conversation" className="chat-conversation p-3 p-lg-4" data-simplebar="init">
+                    <div id="loading" className="d-block">
+                        <center>
+                            <div className="justify-content-center">
+                                <div className="loadingio-eclipse">
+                                    <div className="ldio-rpinwye8j0b">
+                                        <div></div>
+                                    </div>
+                                </div>           
+                            </div>
+                        </center>
+                    </div>
+                </div>
             }
         </React.Fragment>);
     }
 
-    const preRenderBeta = () => { 
+    preRender=()=>{ 
         return (            
             <div className="user-chat w-100">
                 <div className="d-lg-flex">
-                    {estado.chat.openChat.open===true &&
-                        <React.Fragment>dddd
+                    {this.props.parent.chatopen.open===true &&
+                        <React.Fragment>
                             <div className="w-100">
-                                <div onClick={props.callbackCloseEmjoi} className="p-3 p-lg-4 border-bottom">   
-                                  <HeadChatOpen {...props}/>              
+                                <div onClick={this.props.callbackCloseEmjoi} className="p-3 p-lg-4 border-bottom">   
+                                  <HeadChatOpen {...this.props}/>              
                                 </div>
-                                {renderListConversations()}
-                                {estado.conversation.getConversation.length > 0 &&
-                                    <FooterChatOpen 
-                                    auth={props.parent.userAuth} 
-                                    callbackCloseEmjoi={props.callbackCloseEmjoi} 
-                                    callbackHandleSubmit={handleSubmit} 
-                                    callbackHandleSendMessage={handleSendMessage} 
-                                    callbackHandleSendMessageAudio={handleSendMessageAudio} 
-                                    parent={{form:form, emojiTextoValue:emojiTextoValue}} />
+                                {this.renderListConversations()}
+                                {this.props.conversations.length > 0 &&
+                                    <FooterChatOpen auth={this.props.parent.userAuth} callbackCloseEmjoi={this.props.callbackCloseEmjoi} callbackHandleSubmit={this.handleSubmit} callbackHandleSendMessage={this.handleSendMessage} callbackHandleSendMessageAudio={this.handleSendMessageAudio} parent={this.state} />
                                 }
                             </div>                           
-                            <div id="to-user-profile-sidebar" onClick={props.callbackCloseEmjoi} className="user-profile-sidebar">
-                                {renderUserProfileSidebar()}
+                            <div id="to-user-profile-sidebar" onClick={this.props.callbackCloseEmjoi} className="user-profile-sidebar">
+                                {this.renderUserProfileSidebar()}
                             </div>
                         </React.Fragment>
-                    }
-                    {estado.chat.openChat.open===false &&
-                        <React.Fragment>NOOOOOOOO
-                     </React.Fragment>
                     }
                 </div>
             </div>
         );
     }
 
-    const preRender = () => {
-
-        if(estado.chat.openChat.open)
-        {
-            /**
-             * cuando damos click en un sub menu por primera vez
-             */
-            if(!estado.chat.loading)
-            {
-                return (            
-                    <div className="user-chat w-100">
-                        <div className="d-lg-flex">                   
-                            <React.Fragment>
-                                <div className="w-100">
-                                    <div onClick={props.callbackCloseEmjoi} className="p-3 p-lg-4 border-bottom">
-                                        <HeadChatOpen {...props}/>   
-                                        <SpinnerLoad />
-                                    </div>                  
-                                </div>                           
-                                <div id="to-user-profile-sidebar" onClick={props.callbackCloseEmjoi} className="user-profile-sidebar"></div>    
-                            </React.Fragment>                   
-                        </div>
-                    </div>
-                );
-            }else if(estado.chat.loading)
-            {
-                return (            
-                    <div className="user-chat w-100">
-                            <div className="d-lg-flex">
-                                <React.Fragment>
-                                    <div className="w-100">
-                                        <div onClick={props.callbackCloseEmjoi} className="p-3 p-lg-4 border-bottom">   
-                                            <HeadChatOpen {...props}/>      
-                                        </div>
-                                        {estado.chat.loading &&
-                
-                                            renderListConversations()
-                                        }
-
-                                        {!estado.chat.loading &&                                            
-                                            <SpinnerLoad />                                            
-                                        }                                    
-
-                                        {estado.conversation.getConversation.length > 0 &&
-                                            <FooterChatOpen 
-                                                auth={props.parent.userAuth} 
-                                                callbackCloseEmjoi={props.callbackCloseEmjoi} 
-                                                callbackHandleSubmit={handleSubmit} 
-                                                callbackHandleSendMessage={handleSendMessage} 
-                                                callbackHandleSendMessageAudio={handleSendMessageAudio} 
-                                                parent={{form:form, emojiTextoValue:emojiTextoValue}} 
-                                            />
-                                        }
-                                        
-                                    </div>                           
-                                    <div id="to-user-profile-sidebar" onClick={props.callbackCloseEmjoi} className="user-profile-sidebar">
-                                        {renderUserProfileSidebar()}
-                                    </div>                         
-                                </React.Fragment>                       
-                            </div>
-                    </div>
-                );
-            }
-        }else
-        {
-            /**
-             * vista principal solo se cargar al inicio cuando 
-             * no hay accion de eventos
-             */
-            return (            
-                <div className="user-chat w-100">
-                    <div className="d-lg-flex">                   
-                        <React.Fragment>
-                            <div className="w-100">
-                                <div onClick={props.callbackCloseEmjoi} className="p-3 p-lg-4 border-bottom"></div>                                 
-                            </div>                           
-                            <div id="to-user-profile-sidebar" onClick={props.callbackCloseEmjoi} className="user-profile-sidebar"></div>    
-                        </React.Fragment>                   
-                    </div>
-                </div>
-            );
-        }
-    }    
-
-    return(preRender());
+    render(){
+        return(this.preRender());
+    }
 }
-
 export default Conversation;

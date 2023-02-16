@@ -7,7 +7,7 @@ import {validator, API, cookies} from '../lib/Lib';
 //acceder a los hooks de redux toolkit para 
 import {useSelector, useDispatch} from 'react-redux';
 //importar mis Slice definidos 
-import {setLogin} from '../../features/user/loginSlice';
+import {setLogin} from '../../features/user/authSlice';
 
 class Login extends Component {
 

@@ -7,28 +7,28 @@ import {isAuth, cookies, clearCookies} from './components/lib/Lib';
 import {getuserAuth} from './components/helpers/UserAuth';
 
 //acceder a los hooks de redux toolkit para 
-import {useDispatch} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 //importar mis Slice definidos 
-import {setLogin} from './features/user/loginSlice';
+import {setLogin} from './features/user/authSlice';
 
 const App = () => {
 
+  const estado = useSelector((state) => state);
   const dispatch = useDispatch();
 
   const addStoreInfoUser = () => {
     getuserAuth().then(response => {
       dispatch(setLogin({
         access:response.access,
-        usuarioId:4,
-        user:response.result
-      }));      
+        userAuth:response.result
+      }));    
     });	
   }
 
   useEffect(() => {
     loadRender()
     if(isAuth()){
-      addStoreInfoUser()
+      addStoreInfoUser()  
     }
   }, []);	
   
@@ -56,7 +56,7 @@ const App = () => {
      * de lo contrario renderizamos el componete login que nos muestra un formulario
      * para iniciar sesión.
      */
-    if(isAuth()){
+    if(isAuth()){  //console.log(2);
       return (base());
     }else{
       return (login());

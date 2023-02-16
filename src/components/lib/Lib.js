@@ -55,7 +55,7 @@ export const ECHO = new Echo({
     auth: {
         headers: {
            Authorization: "Bearer " +cookies.get('token'),
-           Accept:process.env.REACT_APP_AUTH_HEADERS_ACCEPT,
+           Accept:"application/json",
         }
     },
 })

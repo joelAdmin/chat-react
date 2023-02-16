@@ -7,14 +7,14 @@ import {NewConsulta} from '../forms/Consulta';
 //acceder a los hooks de redux toolkit para 
 import {useSelector, useDispatch} from 'react-redux';
 //importar mis Slice definidos 
-import {setLogin} from '../../features/user/loginSlice';
+import {setLogin} from '../../features/user/authSlice';
 
 const SidebarMenu = (props) => {
 
     const token = cookies.get('token');
     const [show, setShow] = useState(false);
 
-    const userAuth = useSelector((state) => state.login);
+    const userAuth = useSelector((state) => state.auth);
 
     return (
         <div onClick={props.callbackCloseEmjoi} className="side-menu flex-lg-column mr-lg-1">
