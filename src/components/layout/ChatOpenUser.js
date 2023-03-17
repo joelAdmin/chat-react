@@ -1,14 +1,17 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {API, IMG, TIMERMESSAGE, headers} from '../lib/Lib';
+import {SpinnerLoadingMinColor as SpinnerLoadColor} from '../helpers/SpinnerLoading';
 
 import {useSelector, useDispatch} from 'react-redux';
 import {loading, openChat} from '../../features/user/chatSlice';
 import {infoUserTo} from '../../features/user/userToSlice'
 import {getConversation} from '../../features/user/conversationSlice';
 
+import Cookies from 'universal-cookie';
+
 const ChatOpenUser = (props) => {
-    console.log(props);
+    
     const dispatch = useDispatch();
     const estado = useSelector((state)=>state);
 
@@ -56,10 +59,10 @@ const ChatOpenUser = (props) => {
                     chat_id:data.chat_id,
                         usuario_id:data.usuarioid_receptor,
                             nombre:data.nombre_receptor,
-                                        apellido: data.apellido_receptor,
-                                            avatar: data.avatar_receptor,
-                                                email: data.email_receptor,
-                                                    conectado:data.conectado_receptor
+                                apellido: data.apellido_receptor,
+                                    avatar: data.avatar_receptor,
+                                        email: data.email_receptor,
+                                            conectado:data.conectado_receptor
     
                 }
             }else
@@ -98,6 +101,9 @@ const ChatOpenUser = (props) => {
         });
     }
     
+    console.log(props);
+    console.log(estado);
+
     const preRender = () => {
         return (<>
             <div>
@@ -123,11 +129,11 @@ const ChatOpenUser = (props) => {
     
                         {/* Start chat-message-list */}
                         <div className="px-2">
-                            <h5 className="mb-3 px-3 font-size-16">Recientes {props.parent.conversations} {props.parent.auth.usuario_id}</h5>
+                            <h5 className="mb-3 px-3 font-size-16">Chats recientes </h5>
                             <div className="chat-message-list" data-simplebar>
                                 <ul className="list-unstyled chat-list chat-user-list">
-                                    {props.parent.getChatsU.length > 0 ?
-                                        Object.values(props.parent.getChatsU).map((value, key) => {
+                                    {estado.chat.getChatsUser.length > 0 ?
+                                        Object.values(estado.chat.getChatsUser).map((value, key) => {
                                             return (
                                                 <li key={key} className="unread">
                                                     <a href="/#" onClick={()=>{handleOpenChat(value.chat_id)}} >

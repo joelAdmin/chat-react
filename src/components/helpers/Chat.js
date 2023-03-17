@@ -1,8 +1,7 @@
 import {headers, cookies} from '../lib/Lib';
 
-export const getChatsM = async () =>{
-	const user_id = cookies.get('usuario_id');
-    const result = await fetch(process.env.REACT_APP_URL_API+'chatsAuthM/'+user_id, headers);
+export const getChatsM = async (userId) =>{
+    const result = await fetch(process.env.REACT_APP_URL_API+'chatsAuthM/'+userId, headers);
     const data = await result.json();
     return data;
 }

@@ -2,18 +2,53 @@ import React, { Component }  from 'react';
 import Pusher from "pusher-js";
 import Echo from "laravel-echo";
 import Cookies from 'universal-cookie';
+import { useNavigate, Navigate } from "react-router-dom";
+
 
 export const cookies = new Cookies();
 
+export const getErrorAxios = (error) => {
+    if (error.response) {
+        // La respuesta fue hecha y el servidor respondió con un código de estado
+        // que esta fuera del rango de 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // La petición fue hecha pero no se recibió respuesta
+        // `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
+        // http.ClientRequest en node.js
+        console.log(error.request);
+      } else {
+        // Algo paso al preparar la petición que lanzo un Error
+        console.log('Error', error.message);
+      }
+
+    console.log(error.config);
+
+    //Usando toJSON obtienes un objeto con mas información sobre el error HTTP.
+    console.log(error.toJSON());
+}
+
+//console.log(cookies.get('token'));
 export const isAuth = () => {
-    if(cookies.get('token') !== undefined && cookies.get('token')){
+    if(typeof cookies.get('token') != 'undefined' && cookies.get('token')){
         return true;
     }else{
         return false;
     }
 }
 
-export const validator =(responseErrors, classFrom)=>{
+export const isNotAuth = () => {
+    if(typeof cookies.get('token') == 'undefined'){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+export const validator = (responseErrors, classFrom) => {
+    console.log('validando errores de inicio de sesion2');
     const forms = document.querySelectorAll(classFrom);
     const form  = forms[0];
     if(Object.keys(responseErrors).length > 0){[...form.elements].forEach((input) => {
@@ -73,9 +108,20 @@ export const headers = {
       accept: 'application/json',
       Authorization: 'Bearer '+cookies.get('token')
     },
+    mode:'cors',
     data: {},
 }
 
+//headers Autorization
+export const headersSetToken = (token) => {
+    return {
+        headers: {
+        accept: 'application/json',
+        Authorization: 'Bearer '+token
+        },
+        data: {},
+    }
+}
 
 export const headersBlod = {
     headers: {
@@ -84,6 +130,25 @@ export const headersBlod = {
       Authorization: 'Bearer '+cookies.get('token')
     },
     data: {},
+}
+
+export const headersBlodLogin = {
+    headers: {
+      responseType: 'blob',
+      accept: 'application/json',
+      Authorization: 'Bearer '+cookies.get('token')
+    },
+    data: {},
+    validateStatus: function (status) {
+        if(status < 500){
+            //const navigate = useNavigate();
+            //navigate('/login');
+            cookies.remove('usuario_id', {path: "/"});
+            cookies.remove('token', {path: "/"});
+            window.location.href = '/login';
+        } 
+        // Resuelve solo si el código de estado es menor que 500
+    },
 }
 
 //headers Autorization post

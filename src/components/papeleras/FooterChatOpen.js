@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {Component} from "react";
 import '../../assets/css/microfono.css';
 import $ from 'jquery';
 import axios from "axios";
@@ -13,119 +13,45 @@ import Picker, { SKIN_TONE_MEDIUM_DARK } from "emoji-picker-react";
 import 'emoji-picker-react/dist/main.css';
 import '../../assets/css/filehidden.css'
 
-import {loading} from '../../features/user/chatSlice';
-import {getConversation} from '../../features/user/conversationSlice';
+class FooterChatOpen extends Component {
 
-
-import {useSelector, useDispatch} from 'react-redux';
-
-const FooterChatOpen = (props) => {
-    const estado = useSelector((state) => state);
-    const dispatch = useDispatch();
-
-    const [form, setForm] = useState({
-        mensaje:'',
-        emisor_id: 0,
-        receptor_id:0,
-        chat_id:0,
-        ogg:''
-    });
-
-    const [formFile, setFormFile] = useState({
-        mensaje:'',
-        emisor_id: 0,
-        receptor_id:0,
-        chat_id:0,
-        ogg:'',
-        file:''
-    });
-
-    const [quillRef, setQuillRef] = useState(null);
-    const [reactQuillRef, setReactQuillRef] = useState(null);
-
-    const [value, setValue] = useState('');
-
-    /*
-        constructor(props){
-            super(props); 
-            this.state = {
-                form:{
-                    mensaje:'',
-                    emisor_id: 0,
-                    receptor_id:0,
-                    chat_id:0,
-                    ogg:''
-                },
-                formFile:{
-                    mensaje:'',
-                    emisor_id: 0,
-                    receptor_id:0,
-                    chat_id:0,
-                    ogg:'',
-                    file:''
-                }
+    constructor(props){
+        super(props); 
+        this.state = {
+            form:{
+                mensaje:'',
+                emisor_id: 0,
+                receptor_id:0,
+                chat_id:0,
+                ogg:''
+            },
+            formFile:{
+                mensaje:'',
+                emisor_id: 0,
+                receptor_id:0,
+                chat_id:0,
+                ogg:'',
+                file:''
             }
-            this.props.callbackHandleSendMessageAudio();  
-            this.quillRef = null;      // Quill instance
-            this.reactQuillRef = null; // ReactQuill component
-            
         }
-    */
-    
-    /*
-        componentDidMount(){
-            this.grabador();  
-            this.handleChange = this.handleChange.bind(this);
-            this.attachQuillRefs();     
-            //console.log('auth::>', this.props.auth);
-        }
-    */
-        /*
+        this.props.callbackHandleSendMessageAudio();  
+        this.quillRef = null;      // Quill instance
+        this.reactQuillRef = null; // ReactQuill component
+        
+    }
+
+    componentDidMount(){
+        this.grabador();  
+        this.handleChange = this.handleChange.bind(this);
+        this.attachQuillRefs();     
+        //console.log('auth::>', this.props.auth);
+    }
+
     componentDidUpdate(){
         this.attachQuillRefs()
     }
-    */
 
-    useEffect(()=>{
-        props.callbackHandleSendMessageAudio();  
-        //console.log('cargar reactQuillRef');  
-        if(reactQuillRef !== null){
-            attachQuillRefs();
-        }
-        //handleSubmit();
-        //props.callbackHandleSendMessage(value);
-    }, []);
-
-    useEffect(()=>{
-        //console.log('Escribiendo ....');  
-        //props.callbackHandleSendMessage(value);
-        if(value === '<p><br></p>'){
-            $('.btn-audio').show();
-            $('.btn-text').hide();
-        }else{
-            $('.btn-audio').hide();
-            $('.btn-text').show();
-        }
-    }, [value]);
-
-    
-
-    useEffect(()=>{    
-        //console.log('actualizar reactQuillRef');    
-        if(reactQuillRef !== null){
-            attachQuillRefs();
-        }
-    });
-
-    const handleSubmit = (event) => {
-        event.preventDefault(); 
-        //props.callbackHandleSendMessage('');     
-        //props.callbackHandleSendMessage(value);
-        props.callbackHandleSubmit(value);
-        setValue('');
-    }
-
-    const efectoJquery = () => {
+    efectoJquery =()=>{
        $('.input-send-message').on('keyup', function(){
             if($(this).val() == ''){
                 $('.btn-audio').show();
@@ -149,23 +75,25 @@ const FooterChatOpen = (props) => {
         });
     }
 
-    const comprobarSoporteAudio = () => {
+    comprobarSoporteAudio = () => {
         return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
     }
 
-    const updateRequestAudio = (ogg) => {
-        const form = props.parent.form;
-        props.callbackHandleSendMessageAudio();
-        setForm({
-            mensaje:form.mensaje,
-            emisor_id: form.emisor_id,
-            receptor_id:form.receptor_id,
-            chat_id:form.chat_id,
-            ogg:ogg
+    updateRequestAudio =(ogg)=>{
+        const form = this.props.parent.form;
+        this.props.callbackHandleSendMessageAudio();
+        this.setState({
+            form:{
+                mensaje:form.mensaje,
+                emisor_id: form.emisor_id,
+                receptor_id:form.receptor_id,
+                chat_id:form.chat_id,
+                ogg:ogg
+            }
         });
     }
 
-    const grabador = () => {
+    grabador =()=> {
         const selector_star = document.querySelector(".microphone");
         const selector_stop = document.querySelector(".microphoneStop");
         var gumStream;
@@ -292,7 +220,7 @@ const FooterChatOpen = (props) => {
         });
     }
 
-    const emojioneArea = () => {
+    emojioneArea =()=>{
         window.$("#mensaje").emojioneArea({
             pickerPosition: "top",
             filtersPosition: "bottom",
@@ -303,23 +231,33 @@ const FooterChatOpen = (props) => {
         });
     }
 
-    //revisar código
-    const attachQuillRefs = () => {
-        if (typeof reactQuillRef.getEditor !== 'function') return;
-        setQuillRef(reactQuillRef.getEditor());
+    handleChange = (value) => {
+        this.props.callbackHandleSendMessage(value);
+        if(this.props.parent.emojiTextoValue === '<p><br></p>'){
+            $('.btn-audio').show();
+            $('.btn-text').hide();
+        }else{
+            $('.btn-audio').hide();
+            $('.btn-text').show();
+        }
     }
 
-    const insertEmoji = (value) => {
-        var range = quillRef.getSelection();
+    attachQuillRefs = () => {
+        if (typeof this.reactQuillRef.getEditor !== 'function') return;
+        this.quillRef = this.reactQuillRef.getEditor();
+    }
+
+    insertEmoji =(value)=>{
+        var range = this.quillRef.getSelection();
         let position = range ? range.index : 0;
-        quillRef.insertText(position, ''+value)
+        this.quillRef.insertText(position, ''+value)
     }
 
-    const onEmojiClick = (event, emojiObject) => {
-        insertEmoji(emojiObject.emoji);
+    onEmojiClick =(event, emojiObject)=>{
+        this.insertEmoji(emojiObject.emoji);
     }
 
-    const handleShowViewEmoji = (event) => {
+    handleShowViewEmoji =(event)=>{
         if($('#contentEmoji').css('display')=='none'){
             $('#contentEmoji').show(200);
         }else{
@@ -327,20 +265,20 @@ const FooterChatOpen = (props) => {
         }
     }
 
-    const handleUpload = (event) => {        
+    handleUpload = (event) => {        
         var data = new FormData();
-        data.append("chat_id", props.parent.form.chat_id);
+        data.append("chat_id", this.props.parent.form.chat_id);
         data.append("mensaje", '');
-        data.append("emisor_id", props.parent.form.emisor_id);
-        data.append("receptor_id", props.parent.form.receptor_id);
+        data.append("emisor_id", this.props.parent.form.emisor_id);
+        data.append("receptor_id", this.props.parent.form.receptor_id);
         data.append("ogg", '');
         data.append ("file", event.target.files[0]);
         console.log('FormData:', event.target.files[0]);
 
         var random = getRandomArbitrary(0, 999);
-    
-        var avatar = props.auth.avatar;
-        var nombre = props.auth.nombres;
+        var thas = this;
+        var avatar = thas.props.auth.avatar;
+        var nombre = thas.props.auth.nombres;
         var type = event.target.files[0].type;
 
         function typeImage(image){
@@ -462,12 +400,12 @@ const FooterChatOpen = (props) => {
         });
     }
 
-    const renderContentEmoji = () => {
+    renderContentEmoji = () => {
         return (
         <React.Fragment>
             <div id="contentEmoji" className="emojiContent" style={{display:'none'}}>
                 <Picker
-                onEmojiClick={onEmojiClick}
+                onEmojiClick={this.onEmojiClick}
                 disableAutoFocus={true}
                 skinTone={SKIN_TONE_MEDIUM_DARK}
                 groupNames={{ smileys_people: "PEOPLE" }}
@@ -477,19 +415,19 @@ const FooterChatOpen = (props) => {
         </React.Fragment>);
     }
 
-    const renderListBtn = () => {
+    renderListBtn = () => {
         return (<React.Fragment>
             <div className="col-auto">                       
                 <div className="chat-input-links ml-md-2">
                     <ul className="list-inline mb-0">
                         <li key="1" className="list-inline-item">
-                            <button type="button" onClick={(e)=>{handleShowViewEmoji(e)}} id="emojioneArea" className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect" data-toggle="tooltip" data-placement="top" title="Emoji">
+                            <button type="button" onClick={(e)=>{this.handleShowViewEmoji(e)}} id="emojioneArea" className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect" data-toggle="tooltip" data-placement="top" title="Emoji">
                                 <i className="ri-emotion-happy-line fa-1x"></i>
                             </button>
                         </li>
                         <li key="2" className="list-inline-item">                                    
                                 <a href="/#" className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect" data-toggle="tooltip" data-placement="top" title="Attached File">
-                                <input onChange={(event)=>{handleUpload(event)}} name="inputfile" type="file"/> 
+                                <input onChange={(event)=>{this.handleUpload(event)}} name="inputfile" type="file"/> 
                                 <i id="sendFile" className="ri-attachment-line fa-1x"></i>
                             </a>
                         </li>
@@ -506,7 +444,7 @@ const FooterChatOpen = (props) => {
                                     </div>
                                 </div> 
                             </a>
-                            <button onClick={(event)=>{handleSubmit(event)}} className="btn btn-primary font-size-16 btn-lg chat-send waves-effect waves-light btn-text noactivem">
+                            <button type="submit" onSubmit={this.props.callbackHandleSubmit} className="btn btn-primary font-size-16 btn-lg chat-send waves-effect waves-light btn-text noactivem">
                                 <i className="ri-send-plane-2-fill"></i>
                             </button>
                         </li>              
@@ -516,9 +454,9 @@ const FooterChatOpen = (props) => {
         </React.Fragment>);
     }
 
-    const renderFormTextSend = () => {
+    renderFormTextSend = ()=> {
         return (<React.Fragment>
-            <form onSubmit={props.callbackHandleSubmit}>
+            <form onSubmit={this.props.callbackHandleSubmit}>
                 <div className="p-3 p-lg-4 border-top mb-0 content-textarea">                        
                     <div className="row no-gutters">                                    
                         <div className="col">
@@ -527,12 +465,12 @@ const FooterChatOpen = (props) => {
                                 <input type="hidden" name="receptor_id" id="receptor_id" />                                            
                                 <input type="hidden" name="chat_id" id="chat_id" />                           
                                 <ReactQuill
-                                        ref={(el) => {setReactQuillRef(el)}}
+                                        ref={(el) => { this.reactQuillRef = el }}
                                         className="cke_editable bg-light border-light input-send-message textarea"
                                         theme="bubble"
-                                        value={value}
-                                        onChange={setValue}
-                                        onBlur={props.callbackCloseEmjoi}
+                                        value={this.props.parent.emojiTextoValue}
+                                        onChange={this.handleChange}
+                                        onBlur={this.props.callbackCloseEmjoi}
                                         placeholder={"Escribir aqui ..."}
                                 />
                                 {/*<div contentEditable={true} id="message" className="textarea_like_whatsapp bg-light border-light input-send-message" data-text="Type something...">       
@@ -541,7 +479,7 @@ const FooterChatOpen = (props) => {
                                 <textarea name="mensaje" id="mensaje" className="form-control form-control-lg bg-light border-light input-send-message" onChange={this.props.callbackHandleSendMessage}></textarea>*/}
                             </div>
                         </div>
-                        {renderListBtn()}
+                        {this.renderListBtn()}
                                                        
                     </div>                        
                 </div>
@@ -549,17 +487,18 @@ const FooterChatOpen = (props) => {
         </React.Fragment>);
     }
 
-    const preRender = () => { 
+    preRender =()=>{ 
         return (
             <React.Fragment>
-                {renderContentEmoji()}
-                {renderFormTextSend()}
+                {this.renderContentEmoji()}
+                {this.renderFormTextSend()}
             </React.Fragment>
         );
     }
 
-    
-    return (preRender());
+    render(){
+        return (this.preRender());
+    }
 }
 
 export default FooterChatOpen;

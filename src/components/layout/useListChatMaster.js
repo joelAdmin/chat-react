@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 //import axios from "axios";
-import {IMG, TIMERMESSAGE} from '../lib/Lib';
+import {API, headers, headersSetToken, IMG, TIMERMESSAGE} from '../lib/Lib';
 import {getChatsM, getSubChats} from '../helpers/Chat';
 import {getConversations} from '../helpers/Conversations';
 import {random} from '../lib/Lib';
@@ -11,6 +11,9 @@ import {loading, openChat, getChatsMaster, getSubChatsMaster} from '../../featur
 import {infoUserTo} from '../../features/user/userToSlice'
 import {getConversation} from '../../features/user/conversationSlice';
 
+import axios from "axios";
+import Cookies from 'universal-cookie';
+
 export default function useListChatMaster(props){
     const [chats, setChats] = useState([]);
     const [openSubchat, setOpenSubchat] = useState([]);
@@ -20,6 +23,11 @@ export default function useListChatMaster(props){
 
     const dispatch = useDispatch();
     const estado = useSelector((state) => state);
+
+    const cookies = new Cookies();
+
+    //console.log('estadonn:');
+    //console.log(estado);
 
     //validamos si es el mismo emisor
     const loadSubMenu = (emisor_id) => {
@@ -35,16 +43,21 @@ export default function useListChatMaster(props){
     
     const subChat = (emisor_id) => {
         loadSubMenu(emisor_id);
-        getSubChats(emisor_id).then((response)=>{
-            dispatch(getSubChatsMaster(response.result));
-            setloadSubChat(true);
-        }).catch((error)=>{
-            console.log('error',error);
+        axios.get(API.urlApi+'subChatAuthM/'+emisor_id, headersSetToken(cookies.get('token'))).then(response => {
+            if(response.data.res)
+            { 
+                dispatch(getSubChatsMaster(response.data.result));
+                setloadSubChat(true);
+            }
+        }).catch(error => {
+            console.log(error);
         });
     }
 
     useEffect(() => {
-      loadSubMenu(null);
+      console.log('Cargando submenu');
+      //loadSubMenu(null);
+      //subChat();
     }, []);
 
     /*
@@ -111,6 +124,8 @@ export default function useListChatMaster(props){
             dispatch(openChat({chat_id:chat_id, open:true, emisor_id:user.usuario_id})); //validat emisor_id para usuriocliente
             dispatch(infoUserTo(user));//actualizar stado de userTo del chat redux
             dispatch(getConversation(response.result));//actualizar stado de conversation redux
+
+            props.callbackOpenChat({chat_id:chat_id, open:true, user:user, emisor_id:user.usuario_id, conversation:response.result})
         }).catch((error) => {
             console.log(error);
         });
@@ -136,7 +151,7 @@ export default function useListChatMaster(props){
                                 <div className="media-body overflow-hidden">
                                     <h5 className="text-truncate font-size-15 mb-1">{value.nombres}</h5>
                                     <p className="chat-user-message text-truncate mb-0">
-                                    <i className="fa fa-clone" aria-hidden="true"></i> Radicado {value.emisor_id} N# {value.chat_id}
+                                    <i className="fa fa-clone" aria-hidden="true"></i> Emisor:{value.emisor_id} Radicado {value.emisor_id} N# {value.chat_id}
                                     </p>
                                 </div>
                                 <div className="font-size-11"> {TIMERMESSAGE(value.fecha_order)}</div>

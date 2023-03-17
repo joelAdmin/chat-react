@@ -37,12 +37,34 @@ const Conversation = (props) => {
          * estado.chat.loading viene en false desde useLisChatMaster
          * useLisChatMaster
          * */
-       
+        //handleSendMessage('');
         if((estado.chat.openChat.open && !estado.chat.loading) && (chatId != estado.chat.openChat.chat_id)){
             dispatch(loading(true));
             topScroll();
-        }        
+        }     
     }, [estado.conversation.getConversation]);
+
+
+    useEffect(() => {     
+        //handleSendMessage('');  
+        console.log('mensaje[] :'+form.mensaje); 
+        if(form.mensaje.length > 0){
+            console.log('Form actualizando2'); 
+            console.log(form);
+            //handleSubmit();
+        }     
+    }, []);
+
+    useEffect(() => {  
+        console.log('mensaje :'+form.mensaje);  
+
+        //handleSendMessage('');
+        if(form.mensaje.length > 0){
+            //console.log('Form actualizando'); 
+            //console.log(form);
+            //handleSubmit();
+        }    
+    });
 
     const loadingFuntion = () =>{
         if(estado.chat.openChat.open === true){
@@ -76,12 +98,41 @@ const Conversation = (props) => {
     }
 
     const handleSendMessage = (value) => {
+        console.log('rescribiendo datos:'+ value);
         setForm({
             emisor_id:props.parent.chatopen.emisor_id,
             receptor_id:Object(props.parent.userTo).usuario_id,
             chat_id:props.parent.chatopen.chat_id,
             mensaje:value });
-        setEmojiTextoValue(value);
+        //console.log(form);
+    }
+
+    const handleSubmit = (value) => {
+        let formData = {
+            emisor_id:props.parent.chatopen.emisor_id,
+            receptor_id:Object(props.parent.userTo).usuario_id,
+            chat_id:props.parent.chatopen.chat_id,
+            mensaje:value 
+        }
+
+        setForm(formData);
+        const vrandom = random();     
+        const text = htmlMessageTemp(vrandom, props.parent.userAuth.avatar, value);
+        if( formData.mensaje.length > 0){   
+            $("#chat-conversation-list").append(text);
+            $('#new'+vrandom).toggle({height:1000});
+            topScroll();            
+            axios.post(API.urlApi+'sendMessage', formData, headers).then(response => {            
+                if(response.data.res){
+                    console.log('send message ...');   
+                    $('#new'+vrandom).removeClass("opacity-5");                                 
+                }else{
+                    console.log('error al enviar mensaje');
+                }      
+            }).catch(error => {
+                console.log('Error 0001x Send form', error);
+            });
+        }
     }
 
     const handleSendMessageAudio = () => {
@@ -94,7 +145,7 @@ const Conversation = (props) => {
     }
 
     const htmlMessageTemp =(vrandom,avatar, text) => {
-        const texto   =  '<li id="new'+vrandom+'" class="right" style="list-style:none; display:none;">'+
+        const texto   =  '<li id="new'+vrandom+'" class="right opacity-5" style="list-style:none; display:none;">'+
                             '<div class="conversation-list">'+
                                 '<div class="chat-avatar">'+
                                     '<img src="'+avatar+'" alt="" />'+
@@ -120,26 +171,6 @@ const Conversation = (props) => {
                             '</div>'+
                         '</li>';
         return texto;
-    }
-
-    const handleSubmit = (event) => {
-        const vrandom = random();
-        event.preventDefault();
-        const text = htmlMessageTemp(vrandom, props.parent.userAuth.avatar, form.mensaje);
-        if( form.mensaje.length > 0){       
-            $("#chat-conversation-list").append(text);
-            $('#new'+vrandom).toggle({height:1000});
-            handleSendMessage('');             
-            axios.post(API.urlApi+'sendMessage', form, headers).then(response => {            
-                if(response.data.res){
-                    //conversation();
-                }else{
-                    console.log('error en guardado de mensaje');
-                }      
-            }).catch(error => {
-                console.log('Error 0001x Send form', error);
-            }); 
-        }
     }
 
     const renderHeadChatOpen = () => {
@@ -303,40 +334,7 @@ const Conversation = (props) => {
         </React.Fragment>);
     }
 
-    const preRenderBeta = () => { 
-        return (            
-            <div className="user-chat w-100">
-                <div className="d-lg-flex">
-                    {estado.chat.openChat.open===true &&
-                        <React.Fragment>dddd
-                            <div className="w-100">
-                                <div onClick={props.callbackCloseEmjoi} className="p-3 p-lg-4 border-bottom">   
-                                  <HeadChatOpen {...props}/>              
-                                </div>
-                                {renderListConversations()}
-                                {estado.conversation.getConversation.length > 0 &&
-                                    <FooterChatOpen 
-                                    auth={props.parent.userAuth} 
-                                    callbackCloseEmjoi={props.callbackCloseEmjoi} 
-                                    callbackHandleSubmit={handleSubmit} 
-                                    callbackHandleSendMessage={handleSendMessage} 
-                                    callbackHandleSendMessageAudio={handleSendMessageAudio} 
-                                    parent={{form:form, emojiTextoValue:emojiTextoValue}} />
-                                }
-                            </div>                           
-                            <div id="to-user-profile-sidebar" onClick={props.callbackCloseEmjoi} className="user-profile-sidebar">
-                                {renderUserProfileSidebar()}
-                            </div>
-                        </React.Fragment>
-                    }
-                    {estado.chat.openChat.open===false &&
-                        <React.Fragment>NOOOOOOOO
-                     </React.Fragment>
-                    }
-                </div>
-            </div>
-        );
-    }
+
 
     const preRender = () => {
 

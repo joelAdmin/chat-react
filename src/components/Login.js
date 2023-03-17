@@ -1,8 +1,17 @@
 import React, {useEffect, useState} from 'react';
+import { useNavigate, Navigate } from "react-router-dom";
+import {useSelector, useDispatch} from 'react-redux';
+
 import '../assets/css/login.css';
 import axios from 'axios';
 import Alert from './bootstrap/Alert.js';
-import {validator, API, cookies} from './lib/Lib';
+import {validator, API, cookies, headers, headersBlod, headersBlodLogin, getErrorAxios, logout} from './lib/Lib';
+
+import {setLogin} from '../features/user/authSlice';
+import {openChat, getChatsUser, getChatsMaster, getSubChatsMaster} from '../features/user/chatSlice';
+
+import {getChatsU as getApiChatsU, getChatsM as getApiChatsM} from './helpers/Chat';
+import {SpinnerLoading as SpinnerLoad} from './helpers/SpinnerLoading';
 
  const Login = (props) => {
 
@@ -16,7 +25,24 @@ import {validator, API, cookies} from './lib/Lib';
     const [title, setTitle] = useState('');
     const [theme, setTheme] = useState('alert-danger');
 
+    const navigate = useNavigate();
+    const estado = useSelector((state) => state);
+    const dispatch = useDispatch();
+
     const handleSubmitLista = () => {}
+
+    useEffect(()=>{
+        console.log('iniciando login');
+        if(typeof cookies.get('token') == 'undefined')
+		{
+            console.log('limpiando store login');
+            cookies.remove('usuario_id', {path: "/"});
+            cookies.remove('token', {path: "/"});   
+            localStorage.clear(); 
+        }else{
+            return navigate('/'); 
+        }
+    }, []);
 
     /**
     * Actualizar el valor de los inputs
@@ -60,10 +86,74 @@ import {validator, API, cookies} from './lib/Lib';
                  * si obtendo una respuesta creo las cookies 
                  * con el token de sesiòn y redirecciono a /
                  */
+                //console.log(response);
                 cookies.set('token', response.data.token, { path: '/' });
                 cookies.set('usuario_id', response.data.user.usuario_id, { path: '/' });
-               
-                window.location.href = '/';
+
+                dispatch(setLogin({
+                    access:response.data.access,
+                    userAuth:response.data.user
+                }));
+
+                if(response.data.access == 'Mg==')
+                {
+                    console.log('Es un usuario cliente');
+                    console.log(response);
+                    axios.get(process.env.REACT_APP_URL_API+'chatsAuthU/'+response.data.user.usuario_id, {
+                        headers: {
+                          responseType: 'blob',
+                          accept: 'application/json',
+                          Authorization: 'Bearer '+response.data.token
+                        },
+                        data: {},
+                    }).then(resp => {  
+                        //console.log('entro');
+                        //console.log(resp);
+                        dispatch(getChatsUser(resp.data.result));
+                        navigate("/", {
+                            state:{
+                                chats:resp.data.result, 
+                                access: response.data.access, 
+                                userAuth: response.data.user 
+                            }
+                        })
+                    }).catch(function (error) {
+                        //getErrorAxios();
+                        console.log(error);
+                    })
+                    /*getApiChatsU(response.data.user.usuario_id).then(resp => {
+                        dispatch(getChatsUser(resp.result));
+                    });*/
+                }else if(response.data.access == 'MA==')
+                {
+                    console.log('Es un usuario manager');
+                    axios.get(process.env.REACT_APP_URL_API+'chatsAuthM/'+response.data.user.usuario_id, {
+                        headers: {
+                          responseType: 'blob',
+                          accept: 'application/json',
+                          Authorization: 'Bearer '+response.data.token
+                        },
+                        data: {},
+                    }).then(resp => {  
+                        console.log(resp);
+                        dispatch(getChatsMaster(resp.data.result));
+                        navigate("/", {
+                            state:{
+                                chats:resp.data.result, 
+                                access: response.data.access, 
+                                userAuth: response.data.user 
+                            }
+                        }); 
+                        // lo redireccionamos
+                        {/*<Navigate to="/home" state={response.data.user}/>*/}
+                    }).catch(function (error) {
+                        //getErrorAxios();
+                        cookies.remove('usuario_id', {path: "/"});
+                        cookies.remove('token', {path: "/"});
+                        console.log(error);
+                    })
+                }
+
             }else{
                 /**
                  * en caso de no tener respuesta muestro los mensajes 
@@ -72,10 +162,11 @@ import {validator, API, cookies} from './lib/Lib';
                  * desde la configuración del modelo y @property {data.message} es un mensaje 
                  * personalizado en caso de no ingresar los credenciales correctos.
                  */
-
+                console.log('validando errores de inicio de sesion');
                 validator(response.data.errors, '.loginForm');
-                if(response.data.message){                
-                   getMessage(response.data.message);
+                if(response.data.message){       
+                    console.log('validando errores de inicio de sesion 3');         
+                    getMessage(response.data.message);
                 }   
             }        
         }).catch(error => {
@@ -83,8 +174,8 @@ import {validator, API, cookies} from './lib/Lib';
         });        
     }
 
-    return (
-        <div className="container-fluid px-1 px-md-5 px-lg-1 px-xl-5 py-5 mx-auto">                
+    return (typeof cookies.get('token') == 'undefined' ?
+        (<div className="container-fluid px-1 px-md-5 px-lg-1 px-xl-5 py-5 mx-auto">                
             <div className="card card0 border-0">
                 <div className="row d-flex">
                     <div className="col-lg-6">
@@ -121,6 +212,12 @@ import {validator, API, cookies} from './lib/Lib';
                                     <small className="or text-center">Or</small>
                                     <div className="line"></div>
                                 </div>
+
+                                {error  &&
+                                    <div className="alert alert-danger" role="alert">
+                                        {errorMessage}!
+                                    </div>
+                                }
 
                                 {/* validamos si la variable de estado de error es verdadera
                                  para mostrar mensaje de error haciendo uso del componente Alert */}
@@ -165,7 +262,8 @@ import {validator, API, cookies} from './lib/Lib';
                     </div>
                 </div>
             </div>
-        </div>
+        </div>):
+        (<> <SpinnerLoad /></>)
     );
 }
 

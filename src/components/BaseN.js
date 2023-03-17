@@ -15,7 +15,7 @@ import {openChat, getChatsUser, getChatsMaster, getSubChatsMaster} from '../feat
 import {getConversation} from '../features/user/conversationSlice';
 import {infoUserTo} from '../features/user/userToSlice';
 
-const Base = () => {
+const BaseN = (props) => {
 
 	const dispatch = useDispatch();
 	const user = useSelector((state) => state.auth);
@@ -30,7 +30,7 @@ const Base = () => {
 	const [conversations, setConversations] = useState({});//pasar a global con redux
 	const [userTo, setUserTo] = useState();//pasar a global con redux
 	const [access, setAccess] = useState('');//pasar a global con redux
-	const [message, setMessage] = useState('');//pasar a global con redux
+	const [message, setMessage] = useState(false);//pasar a global con redux
 	const [chatopen, setChatopen]   = useState({
 		open:false,
 		chat_id:0,
@@ -39,19 +39,41 @@ const Base = () => {
 	});//pasar a global con redux
 
 	useEffect(() => {
-		console.log('Load 1:'+estado.chat.openChat);
-		console.log(estado.chat.openChat);
-		//userAuth();	
+		console.log('useEffect 1...');
 		
-		config();	
+		//console.log('Load 1:'+estado.chat.openChat);
+		//console.log(estado.chat.openChat);
+		//userAuth();
+		if(typeof user.userAuth.usuario_id !== 'undefined'){
+			//config();
+			console.log(estado.chat.openChat);
+			ECHO.private(`new-message.${estado.auth.userAuth.usuario_id}`).listen('.NewMessage', (data)=>{
+				console.log('ECHO nuevo mensaje');console.log(estado);
+				alert('nuevo mensaje');
+				//console.log(openChats);
+			}); 	
+		}	
+			
 	}, [user.userAuth.usuario_id]);	
 
 	useEffect(() => {
-		console.log('Load 2:'+estado.chat.openChat);
-		console.log(estado.chat.openChat);
+		console.log('useEffect 2.2..');
+		//console.log('Load 2:'+estado.chat.openChat);
+		//console.log(estado.chat.openChat);
 		userAuth();	
 		//config();	
 	}, [user]);	
+
+	useEffect(()=>{
+		//props.addStoreInfoUser()
+        console.log('useEffect 3..');
+        console.log(estado);
+        if(Object.entries(estado.auth.userAuth).length > 0 ){ 
+			console.log(estado);					          
+        }
+    }, [estado.chat.openChat.chat_id]);
+
+	
 
 	const modifyMessage= (data) => {
 		setMessage(data);
@@ -66,12 +88,12 @@ const Base = () => {
 	}
 
 	const config = () => {
-		console.log('ECHO');
-		console.log(estado.chat.openChat);
+		//console.log('ECHO'+user.userAuth.usuario_id);
+		//console.log(estado.chat.openChat);
 		ECHO.private(`new-message.${user.userAuth.usuario_id}`).listen('.NewMessage', (data)=>{
 			console.log('nuevo mensaje');
-			
-			console.log(chat);
+			setMessage(true);
+			//console.log(estado);
 			/**
 			 * varificar si hay chat o coversaciones abiertas ---> si las hay solo actualizo las conversaciones
 			 * sino solo actualizo la lista de mensaje sin leer
@@ -80,14 +102,14 @@ const Base = () => {
 			console.log('data.chat_id:'+data.chat_id);
 			console.log('chatopen.chat_id:'+chatopen.chat_id);*/
 			if(chat.open === true && parseInt(data.chat_id) === parseInt(chat.chat_id)){
-				console.log('chat abierto');
+				//console.log('chat abierto');
 				axios.get(API.urlApi+'getMessage/'+data.chat_id, headers).then(response =>{
 					conversationsCallback(response.data.result, data.user_emisor);
 				}).catch(error =>{
 					console.log(error);
 				});
 			}else{
-				console.log('chat cerrado');
+				//console.log('chat cerrado');
 				userAuth();
 				/*if(estado.auth.access === 'Mg=='){
 					//console.log('ACTUALIZAR LISTA DE CHAT USER ....');
@@ -185,4 +207,4 @@ const Base = () => {
 	);
 }
 
-export default Base;
+export default BaseN;

@@ -246,3 +246,11 @@
 .microphoneStop.active .decibel {
     display: block;
 }
+
+.opacity-5 {
+    opacity: .5;
+}
+
+.opacity-none {
+    opacity: none;
+}
