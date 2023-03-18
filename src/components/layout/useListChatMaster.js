@@ -1,22 +1,22 @@
 import React, {useState, useEffect} from "react";
 //import axios from "axios";
-import {API, headers, headersSetToken, IMG, TIMERMESSAGE} from '../lib/Lib';
+import {IMG, TIMERMESSAGE} from '../lib/Lib';
 import {getChatsM, getSubChats} from '../helpers/Chat';
 import {getConversations} from '../helpers/Conversations';
 import {random} from '../lib/Lib';
 import {SpinnerLoadingMinColor as SpinnerLoadColor} from '../helpers/SpinnerLoading';
 
 import {useSelector, useDispatch} from 'react-redux';
-import {loading, openChat, getChatsMaster, getSubChatsMaster} from '../../features/user/chatSlice';
+import {loading, openChat, getChatsMaster, getSubChatsMaster, getCollapseChat} from '../../features/user/chatSlice';
 import {infoUserTo} from '../../features/user/userToSlice'
 import {getConversation} from '../../features/user/conversationSlice';
 
 import axios from "axios";
 import Cookies from 'universal-cookie';
+import $, { contains } from 'jquery';
 
 export default function useListChatMaster(props){
-    const [chats, setChats] = useState([]);
-    const [openSubchat, setOpenSubchat] = useState([]);
+   
     const [chatId, setChatId] = useState(0);  
     const [emisorId, setEmisorId] = useState(0);
     const [loadSubChat, setloadSubChat] = useState(false);
@@ -25,9 +25,6 @@ export default function useListChatMaster(props){
     const estado = useSelector((state) => state);
 
     const cookies = new Cookies();
-
-    //console.log('estadonn:');
-    //console.log(estado);
 
     //validamos si es el mismo emisor
     const loadSubMenu = (emisor_id) => {
@@ -40,45 +37,42 @@ export default function useListChatMaster(props){
             setloadSubChat(true);
         }
     }
+
+    const setReduxStateCollapse = (emisor_id) => {
+        dispatch(getCollapseChat({
+            status:true,
+            emisorId:emisor_id
+        }));
+       
+        if ($("#collapseExample_"+emisor_id).hasClass("show")) {
+            // La clase miClase está definida en el div
+            console.log('La clase show está definida en el div');
+            dispatch(getCollapseChat({}));
+        } else {
+            // La clase miClase no está definida en el div
+            if(Object.entries(estado.chat.getCollapseChat).length > 0)
+            {
+                console.log('La clase show está definida en CHAT  DIFERENTE en el div');
+            }else{
+                console.log('1ER La clase show no está definida en el div');
+            }           
+        }
+    }
     
     const subChat = (emisor_id) => {
-        loadSubMenu(emisor_id);
-        axios.get(API.urlApi+'subChatAuthM/'+emisor_id, headersSetToken(cookies.get('token'))).then(response => {
-            if(response.data.res)
-            { 
-                dispatch(getSubChatsMaster(response.data.result));
-                setloadSubChat(true);
-            }
-        }).catch(error => {
-            console.log(error);
-        });
+        //setReduxStateCollapse(emisor_id);
+        loadSubMenu(emisor_id);        
+        getSubChats(emisor_id).then((response)=>{
+			dispatch(getSubChatsMaster(response.result));
+            setloadSubChat(true);
+		}).catch((error)=>{
+			console.log(error);
+		});
     }
 
     useEffect(() => {
       console.log('Cargando submenu');
-      //loadSubMenu(null);
-      //subChat();
     }, []);
-
-    /*
-        const subChatAuto = (emisor_id) => {
-            getSubChats(emisor_id).then((response)=>{
-                setSubchats(response.result);
-            }).catch((error)=>{
-                console.log('error',error);
-            });
-        }
-
-        const queryChats = () => {   console.log('ejecutando queryChats');    
-            if(props.parent.getChatsM.length > 0){
-                //console.log('master get', props.parent.getChatsM);
-                setChats(props.parent.getChatsM);
-                if(chats.length > 0){
-                    subChatAuto(chats[0].emisor_id);
-                }
-            }
-        }
-    */
     
     const handleOpenChat = (chat_id) => { 
         let user = {}
@@ -131,18 +125,12 @@ export default function useListChatMaster(props){
         });
     }
 
-    /*
-        useEffect(() => {
-            queryChats();
-        }, [props.parent.getChatsM]);
-    */
-
     return (<div id="accordion">
         {estado.chat.getChatsMaster.length > 0 ?
             Object.values(estado.chat.getChatsMaster).map((value, key) => {
                 return (
                     <li key={random + key} className="unread">
-                        <a href={'#collapseExample_'+value.chat_id} data-toggle="collapse" onClick={()=>{subChat(value.emisor_id)}}  role="button" aria-expanded="false" aria-controls={'collapseExample_'+value.chat_id}  >
+                        <a href={'#collapseExample_'+value.emisor_id} data-toggle="collapse" onClick={()=>{subChat(value.emisor_id)}}  role="button" aria-expanded="false" aria-controls={'collapseExample_'+value.chat_id}  >
                             <div className="media">{/* away online offline */}
                                 <div className={value.conectado > 0 ? "chat-user-img online align-self-center mr-3" : "chat-user-img offline align-self-center mr-3"} >
                                     <img src={value.avatar !== '' ? value.avatar : IMG } className="rounded-circle avatar-xs" alt=""/>
@@ -163,7 +151,7 @@ export default function useListChatMaster(props){
                                 </div>
                             </div>
                         </a>
-                        <div className="collapse" id={'collapseExample_'+value.chat_id} data-parent="#accordion">
+                        <div className="filterColllapse collapse" data-emisor={value.emisor_id} id={'collapseExample_'+value.emisor_id} data-parent="#accordion">
                             <div className="card card-body">
                                 <ol className="list-unstyled">
                                     {loadSubChat?

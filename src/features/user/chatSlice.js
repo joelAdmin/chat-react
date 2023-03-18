@@ -6,7 +6,8 @@ const initialState =
     getChatsUser:{},
     getChatsMaster:{},
     getSubChatsMaster:{},
-    loading:false
+    loading:false,
+    getCollapseChat:{}
 }
 
 
@@ -26,11 +27,14 @@ const chatSlice = createSlice({
         getChatsMaster:(state, action) => {
             state.getChatsMaster = action.payload
         },
+        getCollapseChat:(state, action) => {
+            state.getCollapseChat = action.payload
+        },
         getSubChatsMaster:(state, action) => {
             state.getSubChatsMaster = action.payload
         },
     }
 });
 
-export const {loading, openChat, getChatsUser, getChatsMaster, getSubChatsMaster} = chatSlice.actions;
+export const {loading, openChat, getChatsUser, getChatsMaster, getSubChatsMaster, getCollapseChat} = chatSlice.actions;
 export default chatSlice.reducer;

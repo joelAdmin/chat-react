@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import { useNavigate, Navigate, useLocation} from "react-router-dom";
+import { useNavigate, useLocation} from "react-router-dom";
 import SidebarMenu from './layout/SidebarMenu.js';
 import ChatLeftSidebar from './layout/ChatLeftSidebar.js';
 import Conversation from './layout/Conversation.js';
-import {getuserAuth as getApiUserAuth} from './helpers/UserAuth';
 import {getChatsU as getApiChatsU, getChatsM as getApiChatsM} from './helpers/Chat';
-import {ECHO, API, headers, isAuth, isNotAuth} from './lib/Lib';
+import {getConversations} from './helpers/Conversations';
+import {ECHO} from './lib/Lib';
 import axios from 'axios';
 import $, { contains } from 'jquery';
 import {getSubChats} from './helpers/Chat';
@@ -26,33 +26,11 @@ const Home = (props) => {
 	const user = useSelector((state) => state.auth);
 	const estado = useSelector((state) => state);
 	const chat = useSelector((state) => state.chat);
-	const chatOpen = useSelector((state) => state.chat.openChat);
-	const getChatsMasterState = useSelector((state) => state.chat.getChatsMaster);
 
 	const [openchat, setOpenchat] = useState(false);
-	const [openchat_id, setOpenchat_id] = useState(0);
-	const [getChatsM, setGetChatsM] = useState({});//pasar a global con redux
 	const [getChatsU, setGetChatsU] = useState({});//pasar a global con redux
-	const [conversations, setConversations] = useState({});//pasar a global con redux
-	const [userTo, setUserTo] = useState();//pasar a global con redux
-	const [access, setAccess] = useState('');//pasar a global con redux
-	const [message, setMessage] = useState(false);//pasar a global con redux
-	//const [chats, setChats] = useState([]);
-	//const [userAuth, setUserAuth] = useState({});
-	const [chatopen, setChatopen]   = useState({
-		open:false,
-		chat_id:0,
-		emisor_id:0,
-		receptor_id:0
-	});
-	//pasar a global con redux    
-
-    //const [userAcess, setUserAcess] = useState(estado.auth.access);
+	
     useEffect(() => { 
-		/*console.log('location');
-		console.log(location.state);
-		console.log('Estado:');
-		console.log(estado);*/
 		//si nohay token de se redirecciona a login
 		if(typeof cookies.get('token') == 'undefined')
 		{
@@ -98,109 +76,16 @@ const Home = (props) => {
 				userAuth:location.state.userAuth
 			}, {});		  
 		}
-		
     }, []);
 
-
-	useEffect(() => {
-		console.log('Abriendo chat ......');
-		//console.log(user);	
-		//console.log(chat.openChat);		
+	useEffect(() => {	
 		echoNewMessageInput(user, chat.openChat);	
 	},[chat.openChat]);	
-
-
-	useEffect(() => {
-		if(Object.entries(chat.getSubChatsMaster).length > 0)
-		{
-			console.log('Abriendo nivel superior chat master ......');
-			console.log(chat.getSubChatsMaster[0].emisor_id);
-			//setStateReduxByAPIGetSubChat(chat.getSubChatsMaster[0].emisor_id);
-		}
-	},[chat.getSubChatsMaster]);
-
 
 	useEffect(() => {
 		console.log('Actualizando conversation');	
 		topScroll();
-	},[estado.conversation.getConversation]);	
-
-	/*
-		useEffect(() => {
-			//console.log('user:'+user.access.length);	
-			console.log('Ejecuntando ......');			
-			if(user.access.length > 0)
-			{
-				console.log('usuario en sesion');
-
-				if(Object.entries(chat.openChat).length === 0) 
-				{
-					console.log('Todos estan cerrados');
-					//setStateReduxByAPIGetChatsMaster();
-							
-				}else if(Object.entries(chat.openChat).length > 0)
-				{				
-					console.log('Hay almenos un chat abierto');
-					
-				}
-
-			}		
-		},[user, chat.openChat]);	
-	*/
-
-
-	const echoNewMessageInputNull = () => {
-		//console.log('ECHO'+user.userAuth.usuario_id);
-		//console.log(estado.chat.openChat);
-		//console.log(user);
-		//console.log(openChat);
-		
-		ECHO.private(`new-message.${user.userAuth.usuario_id}`).listen('.NewMessage', (data)=>{
-			console.log('nuevo mensaje');
-			console.log(chat);
-			setMessage(true);
-			if(Object.entries(chat.openChat).length == 0){
-				console.log('null');
-			}
-
-			/*
-			if(Object.entries(chat.openChat).length > 0) 
-			{
-				console.log('Hay almenos un chat abierto');
-			}else if(Object.entries(chat.openChat).length === 0)
-			{
-				console.log('Todos estan cerrados');
-			}/
-			//console.log(estado);
-			/**
-			 * varificar si hay chat o coversaciones abiertas ---> si las hay solo actualizo las conversaciones
-			 * sino solo actualizo la lista de mensaje sin leer
-			 */
-			/*console.log('chatopen.open:'+chatopen.open);
-			console.log('data.chat_id:'+data.chat_id);
-			console.log('chatopen.chat_id:'+chatopen.chat_id);*/
-			/*
-			if(chatOpen.open === true && parseInt(data.chat_id) === parseInt(chatOpen.chat_id)){
-				//console.log('chat abierto');
-				axios.get(API.urlApi+'getMessage/'+data.chat_id, headers).then(response =>{
-					conversationsCallback(response.data.result, data.user_emisor);
-				}).catch(error =>{
-					console.log(error);
-				});
-			}else{
-				console.log('chat cerrado');
-				//userAuth();
-				if(estado.auth.access === 'Mg=='){
-					//console.log('ACTUALIZAR LISTA DE CHAT USER ....');
-					chatsU();
-				}else{
-					//console.log('FALTO EL ACTUALIZAR SUBCHAT CON MENSAJE NUEVO....');
-					chatsM();
-				}
-			}
-			*/
-		});
-	}
+	},[estado.conversation.getConversation]);
 
 	const topScroll = (validate) => { 
             
@@ -223,17 +108,26 @@ const Home = (props) => {
         }        
     }
 
+	const setSubmenuByChat = (emisor_id) => {
+		var dataEmisorId = $(".filterColllapse.show").filter(function() {
+			return $(this).data("emisor");
+		}).data("emisor");
+
+		if(typeof dataEmisorId != 'undefined')
+		{
+			if(parseInt(dataEmisorId) === parseInt(emisor_id))
+			{
+				setStateReduxByAPIGetSubChat(emisor_id);
+			}
+		}
+	}
+
 	const echoNewMessageInput = (auth, openChat) => {
 		if(auth.access.length > 0)
 		{
-			//console.log('user auth');
-			//console.log(auth);
-			//console.log('echoNewMessageInput chat_id:'+Object.entries(chat).length);
 			ECHO.private(`new-message.${auth.userAuth.usuario_id}`).listen('.NewMessage', (data) => {
 				console.log('ECHO nuevo mensaje open chat_id:'+Object.entries(openChat).length);
 				console.log(data);
-				//console.log('mensaje recibido de chat_id:'+data.chat_id);
-				setMessage(true);
 				if(Object.entries(openChat).length > 0)
 				{
 					if((openChat.open == true) && (parseInt(data.chat_id) == parseInt(openChat.chat_id)))
@@ -243,92 +137,53 @@ const Home = (props) => {
 					}else
 					{
 						console.log('conversacion abierta con DIFERENTE <> CHAT y recibiendo ...');
-						//console.log(chat.getSubChatsMaster[0].emisor_id);	
 					}
 				}else if(Object.entries(openChat).length === 0)
 				{
 					console.log('conversacion cerrada y recibiendo ...');
 					setStateReduxByAPIGetChats(auth);
-					//setStateReduxByAPIGetSubChat(auth.userAuth.usuario_id);
+					if(auth.access == 'MA==')
+					{
+						setSubmenuByChat(data.emisor_id);
+					}	
 				}				
 			});
 		}
 	}
 
-	const echoNewMessageInput_ = (user, openChat) => {
-		if(user.access.length > 0)
-		{
-			console.log('user__');
-			console.log(user);
-			console.log('echoNewMessageInput chat_id:'+Object.entries(chat).length);
-			ECHO.private(`new-message.${user.userAuth.usuario_id}`).listen('.NewMessage', (data)=>{
-				console.log('____nuevo mensaje open chat_id:'+Object.entries(openChat).length);
-				console.log(openChat);
-				console.log('____mensaje recibido de chat_id:'+data.chat_id);
-				setMessage(true);
-				if(Object.entries(openChat).length > 0)
-				{
-					if((openChat.open == true) && (parseInt(data.chat_id) == parseInt(openChat.chat_id)))
-					{
-						console.log('conversacion abierta con el mismo chat y recibiendo ...');							
-						//consulta(data.chat_id, data.user_emisor);						
-					}else
-					{
-						console.log('conversacion abierta con DIFERENTE <> CHAT y recibiendo ...');	
-					}
-				}else if(Object.entries(openChat).length === 0)
-				{
-					console.log('conversacion cerrada y recibiendo ...');
-				}
-			});
-		}
-		//ECHO.disconnect();
-	}
-
-
-	const setStateReduxByAPIGetConversation = (chat_id, user_emisor, auth) => {
-		if(auth.access == 'Mg==')
-		{
-			console.log('usuario conversation api');
-		}else if(auth.access == 'MA==') {
-			axios.get(process.env.REACT_APP_URL_API+'getMessage/'+chat_id, headers).then(response => {
-				console.log('recibiendo conversation de api');				
-				dispatch(getConversation(response.data.result));
-				topScroll();
-				//dispatch(infoUserTo(getuserto));
-				//conversationsCallback(response.data.result, user_emisor);
-				
-			}).catch(error =>{
-				console.log(error);
-			});
-		}
+	const setStateReduxByAPIGetConversation = (chat_id, user_emisor, auth) => {			
+		getConversations(chat_id).then((response)=>{
+			dispatch(getConversation(response.result));
+			topScroll();	
+		}).catch((error)=>{
+			console.log(error);
+		});	
 	}
 
 	const setStateReduxByAPIGetChats = (auth) => {
 		if(auth.access == 'Mg==')
 		{
 			console.log('usuario chats api');
+			getApiChatsU(auth.userAuth.usuario_id).then(response => {
+				dispatch(getChatsUser(response.result));
+			}).catch((error) => {
+				console.log('error',error);
+			});
 		}else if(auth.access == 'MA==') {
-			axios.get(process.env.REACT_APP_URL_API+'chatsAuthM/'+auth.userAuth.usuario_id, headers).then(response => {  
-				console.log(response);
-				dispatch(getChatsMaster(response.data.result));
-			}).catch(function (error) {
-				console.log(error);
+			getApiChatsM(auth.userAuth.usuario_id).then((response) => {
+				dispatch(getChatsMaster(response.result));
+			}).catch((error)=>{
+				console.log('error',error);
 			});
 		}
 	}
 
-	const setStateReduxByAPIGetSubChat = (emisor_id) => {
-        axios.get(process.env.REACT_APP_URL_API+'subChatAuthM/'+emisor_id, headers).then(response => {
-            if(response.data.res)
-            { 
-				console.log('recibiendo subcat de api');
-				console.log(response);
-                dispatch(getSubChatsMaster(response.data.result));
-            }
-        }).catch(error => {
-            console.log(error);
-        });
+	const setStateReduxByAPIGetSubChat = (emisor_id) => {       
+		getSubChats(emisor_id).then((response)=>{
+			dispatch(getSubChatsMaster(response.result));
+		}).catch((error)=>{
+			console.log(error);
+		});
     }
 
 	const setStateReduxByLocationGetChats = () => {
@@ -350,84 +205,10 @@ const Home = (props) => {
 		}
 	}
 
-	/*useEffect(()=>{
-		if(isAuth == false)
-		{
-			return navigate('/login');
-		}
-	});*/
-
-    /*
-	useEffect(() => {
-		console.log('useEffect 1');
-		
-		//console.log('Load 1:'+estado.chat.openChat);
-		//console.log(estado.chat.openChat);
-		//userAuth();
-		if(typeof user.userAuth.usuario_id !== 'undefined'){
-			//config();
-			console.log(estado.chat.openChat);
-			ECHO.private(`new-message.${estado.auth.userAuth.usuario_id}`).listen('.NewMessage', (data)=>{
-				console.log('ECHO nuevo mensaje');console.log(estado);
-				alert('nuevo mensaje');
-				//console.log(openChats);
-			}); 	
-		}	
-			
-	}, [user.userAuth.usuario_id]);	
-    */
-
-    /*
-	useEffect(() => {
-		console.log('useEffect 2.2');
-		//console.log('Load 2:'+estado.chat.openChat);
-		//console.log(estado.chat.openChat);
-		userAuth();	
-		//config();	
-	}, [user]);	*/
-
-    /*
-	useEffect(()=>{
-		//props.addStoreInfoUser()
-        console.log('useEffect 3');
-        console.log(estado);
-        if(Object.entries(estado.auth.userAuth).length > 0 ){ 
-			console.log(estado);					          
-        }
-    }, [estado.chat.openChat.chat_id]);
-    */
-
 	const conversationsCallback = (getconversations, getuserto) => {
 		dispatch(getConversation(getconversations));
 		dispatch(infoUserTo(getuserto));
 	}
-
-    /*
-	const userAuth = () => {	
-		if((estado.auth.access == 'Mg==') && (estado.auth.access != '')){
-			console.log('chat usuario');
-			chatsU();
-		}else if((estado.auth.access == 'MA==') && (estado.auth.access != '')){
-			console.log('chat manager');
-			chatsM();
-		}	
-	}
-
-	const chatsU = () => {
-        getApiChatsU(user.userAuth.usuario_id).then(response => {
-			setGetChatsU(response.result);
-			dispatch(getChatsUser(response.result));
-        });
-    }
-
-	const chatsM = () => {
-		getApiChatsM().then((response) => {
-			dispatch(getChatsMaster(response.result));
-        }).catch((error)=>{
-            console.log('error',error);
-        });
-	}
-	*/
 
 	const conversation = () => {
 
@@ -455,7 +236,6 @@ const Home = (props) => {
 									access={user.access} />);
 	}
 
-
 	/**
 	 * función encargada de  alterar estilo css mediante clases
 	 * puede ser implementada mediante eventos js como onclick
@@ -474,8 +254,6 @@ const Home = (props) => {
 	 */
 	const sidebarMenu = () => {		
 		if(user.userAuth !== ''){
-			//console.log('userAuth');
-			//console.log(user.userAuth);
 			return (<SidebarMenu callbackCloseEmjoi={callbackCloseEmjoi()} auth={user.userAuth} />); 
 		}   	
 	}

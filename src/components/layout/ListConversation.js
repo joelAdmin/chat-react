@@ -16,12 +16,12 @@ class ListConversation extends Component{
        
     }
 
-    conversation=()=>{
+    conversation=()=>{console.log(this.props.values);console.log(this.props.parent.chatopen);
         return (                        
             <li key={random} className={(this.props.values.receptor_id !== this.props.parent.chatopen.emisor_id)?'right':''}>
                 <div className="conversation-list">
-                    <div className="chat-avatar">
-                        <img src={(this.props.values.avatar_emisor !== null)?this.props.values.avatar_emisor:IMG} alt="avatar" />
+                    <div className="chat-avatar">.-----
+                        <img src={(this.props.values.avatar_receptor !== null)?this.props.values.avatar_receptor:IMG} alt="avatar" />
                     </div>
 
                     <div className="user-chat-content">
