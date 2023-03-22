@@ -1,33 +1,41 @@
-import React, {Component} from "react";
+import React, {useEffect, useState} from "react";
 import {random, IMG} from '../lib/Lib';
+import {useSelector, useDispatch} from 'react-redux';
 
-class ListConversationAudio extends Component {
+const ListConversationAudio = (props) => {
 
-    componentDidMount(){
-      
-    }
+    const conversation = () => {
+        const estado = useSelector((state) => state);
+        let claseCss = '';
+        let avatar = IMG;
+        let nombre = '';
 
-    componentDidUpdate(){
-       
-    }
+        if((parseInt(props.values.emisor_id) !== parseInt(estado.auth.userAuth.usuario_id))){
+            claseCss = 'right';
+            avatar   = (props.values.avatar_receptor == null)?IMG:estado.auth.userAuth.avatar;
+            nombre   = estado.auth.userAuth.nombres;
+        }else
+        {
+            avatar   = (props.userTo.avatar == null)?IMG:props.userTo.avatar;
+            nombre   = props.userTo.nombre;
+        }
 
-    conversation=()=>{
         return (                        
-            <li key={random} className={(this.props.values.receptor_id !== this.props.parent.chatopen.emisor_id)?'right':''}>
+            <li key={random} className={claseCss}>
                 <div className="conversation-list">
                     <div className="chat-avatar">
-                        <img src={(this.props.values.avatar_emisor !== null)?this.props.values.avatar_emisor:IMG} alt="avatar" />
+                        <img src={avatar} alt="avatar" />
                     </div>
 
                     <div className="user-chat-content">
                         <div className="ctext-wrap">
                             <div className="ctext-wrap-content">
                                 <div className="mb-0"><p></p>
-                                    <audio key={random} controls><track kind="captions"></track>  <source src={this.props.values.ogg} type="audio/wav"/> </audio>
+                                    <audio key={random} controls><track kind="captions"></track>  <source src={props.values.ogg} type="audio/wav"/> </audio>
                                 </div>
                                 <p className="chat-time mb-0">
                                     <i className="ri-time-line align-middle"></i> 
-                                    <span className="align-middle">{this.props.values.fecha} </span>
+                                    <span className="align-middle">{props.values.fecha} </span>
                                 </p>
                             </div>
                             <div className="dropdown align-self-start">
@@ -42,7 +50,7 @@ class ListConversationAudio extends Component {
                                 </div>
                             </div>
                         </div>
-                        <div className="conversation-name">{this.props.values.nombre_emisor}</div>
+                        <div className="conversation-name">{nombre}</div>
                     </div>
                 </div>
             </li>  
@@ -50,9 +58,8 @@ class ListConversationAudio extends Component {
     }
 
 
-    render(){
-        return(this.conversation());
-    }
+
+        return(conversation());
 
 }
 
