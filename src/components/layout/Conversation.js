@@ -97,21 +97,12 @@ const Conversation = (props) => {
         $('.user-profile-sidebar').show();
     }
 
-    const handleSendMessage = (value) => {
-        console.log('rescribiendo datos:'+ value);
-        setForm({
-            emisor_id:props.parent.chatopen.emisor_id,
-            receptor_id:Object(props.parent.userTo).usuario_id,
-            chat_id:props.parent.chatopen.chat_id,
-            mensaje:value });
-        //console.log(form);
-    }
-
     const handleSubmit = (value) => {
+        console.log(estado);
         let formData = {
-            emisor_id:props.parent.chatopen.emisor_id,
-            receptor_id:Object(props.parent.userTo).usuario_id,
-            chat_id:props.parent.chatopen.chat_id,
+            emisor_id: estado.auth.userAuth.usuario_id,
+            receptor_id:estado.chat.openChat.emisor_id,
+            chat_id:estado.chat.openChat.chat_id,
             mensaje:value 
         }
 
@@ -133,15 +124,6 @@ const Conversation = (props) => {
                 console.log('Error 0001x Send form', error);
             });
         }
-    }
-
-    const handleSendMessageAudio = () => {
-         setForm({
-            emisor_id:props.parent.chatopen.emisor_id,
-            receptor_id:Object(props.parent.userTo).usuario_id,
-            chat_id:props.parent.chatopen.chat_id,
-            mensaje:''
-        });
     }
 
     const htmlMessageTemp =(vrandom,avatar, text) => {
@@ -334,8 +316,6 @@ const Conversation = (props) => {
         </React.Fragment>);
     }
 
-
-
     const preRender = () => {
 
         if(estado.chat.openChat.open)
@@ -384,8 +364,6 @@ const Conversation = (props) => {
                                                 auth={props.parent.userAuth} 
                                                 callbackCloseEmjoi={props.callbackCloseEmjoi} 
                                                 callbackHandleSubmit={handleSubmit} 
-                                                callbackHandleSendMessage={handleSendMessage} 
-                                                callbackHandleSendMessageAudio={handleSendMessageAudio} 
                                                 parent={{form:form, emojiTextoValue:emojiTextoValue}} 
                                             />
                                         }

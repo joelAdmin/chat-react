@@ -42,85 +42,40 @@ const FooterChatOpen = (props) => {
 
     const [quillRef, setQuillRef] = useState(null);
     const [reactQuillRef, setReactQuillRef] = useState(null);
-
     const [value, setValue] = useState('');
 
-    /*
-        constructor(props){
-            super(props); 
-            this.state = {
-                form:{
-                    mensaje:'',
-                    emisor_id: 0,
-                    receptor_id:0,
-                    chat_id:0,
-                    ogg:''
-                },
-                formFile:{
-                    mensaje:'',
-                    emisor_id: 0,
-                    receptor_id:0,
-                    chat_id:0,
-                    ogg:'',
-                    file:''
-                }
-            }
-            this.props.callbackHandleSendMessageAudio();  
-            this.quillRef = null;      // Quill instance
-            this.reactQuillRef = null; // ReactQuill component
-            
-        }
-    */
-    
-    /*
-        componentDidMount(){
-            this.grabador();  
-            this.handleChange = this.handleChange.bind(this);
-            this.attachQuillRefs();     
-            //console.log('auth::>', this.props.auth);
-        }
-    */
-        /*
-    componentDidUpdate(){
-        this.attachQuillRefs()
-    }
-    */
-
     useEffect(()=>{
-        props.callbackHandleSendMessageAudio();  
-        //console.log('cargar reactQuillRef');  
         if(reactQuillRef !== null){
             attachQuillRefs();
         }
-        //handleSubmit();
-        //props.callbackHandleSendMessage(value);
+        grabador();
     }, []);
 
     useEffect(()=>{
-        //console.log('Escribiendo ....');  
-        //props.callbackHandleSendMessage(value);
-        if(value === '<p><br></p>'){
-            $('.btn-audio').show();
-            $('.btn-text').hide();
-        }else{
-            $('.btn-audio').hide();
-            $('.btn-text').show();
-        }
-    }, [value]);
+        enabledBtnAudio(value);        
+    }, [value]);    
 
-    
-
-    useEffect(()=>{    
-        //console.log('actualizar reactQuillRef');    
+    useEffect(()=>{      
         if(reactQuillRef !== null){
             attachQuillRefs();
         }
     });
 
+    const enabledBtnAudio = (value) => {
+        console.log('value:'+value);
+        if(value === '<p><br></p>' || value == '')
+        {
+            $('.btn-audio').show();
+            $('.btn-text').hide();
+        }else
+        {
+            $('.btn-audio').hide();
+            $('.btn-text').show();       
+        }
+    }
+
     const handleSubmit = (event) => {
         event.preventDefault(); 
-        //props.callbackHandleSendMessage('');     
-        //props.callbackHandleSendMessage(value);
         props.callbackHandleSubmit(value);
         setValue('');
     }
@@ -153,18 +108,6 @@ const FooterChatOpen = (props) => {
         return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
     }
 
-    const updateRequestAudio = (ogg) => {
-        const form = props.parent.form;
-        props.callbackHandleSendMessageAudio();
-        setForm({
-            mensaje:form.mensaje,
-            emisor_id: form.emisor_id,
-            receptor_id:form.receptor_id,
-            chat_id:form.chat_id,
-            ogg:ogg
-        });
-    }
-
     const grabador = () => {
         const selector_star = document.querySelector(".microphone");
         const selector_stop = document.querySelector(".microphoneStop");
@@ -181,8 +124,7 @@ const FooterChatOpen = (props) => {
         var timer;
         var connection = {};
         var connect = false;
-        var microphonebar = document.getElementById("microphoneStopbar");   
-        const thas = this;   
+        var microphonebar = document.getElementById("microphoneStopbar");     
        
         $('.microphone').on("click", function() {
             clicked = true;
@@ -217,10 +159,15 @@ const FooterChatOpen = (props) => {
                         var base64data;
                         reader.readAsDataURL(blob);
                         reader.onloadend = function() {
-                            base64data = reader.result;
-                            thas.updateRequestAudio(base64data);
-                            //console.log('form_',thas.state.form);                            
-                            axios.post(API.urlApi+'sendMessageAudio', thas.state.form, headers).then(response => {            
+                            base64data = reader.result;  
+                            console.log(estado);                                                    
+                            axios.post(process.env.REACT_APP_URL_API+'sendMessageAudio', {
+                                mensaje:'',
+                                emisor_id: estado.auth.userAuth.usuario_id,
+                                receptor_id:estado.chat.openChat.emisor_id,
+                                chat_id:estado.chat.openChat.chat_id,
+                                ogg:base64data
+                            }, headers).then(response => {            
                                 if(response.data.res){
                                     //console.log('go:', response.data);
                                 }else{
@@ -229,6 +176,7 @@ const FooterChatOpen = (props) => {
                             }).catch(error => {
                                 console.log('Error 0001x Send form', error);
                             });
+                            
                         }
                         //console.log('blob', blob.size);
                         
@@ -329,18 +277,18 @@ const FooterChatOpen = (props) => {
 
     const handleUpload = (event) => {        
         var data = new FormData();
-        data.append("chat_id", props.parent.form.chat_id);
+        data.append("chat_id", estado.chat.openChat.chat_id);
         data.append("mensaje", '');
-        data.append("emisor_id", props.parent.form.emisor_id);
-        data.append("receptor_id", props.parent.form.receptor_id);
+        data.append("emisor_id", estado.auth.userAuth.usuario_id);
+        data.append("receptor_id", estado.chat.openChat.emisor_id);
         data.append("ogg", '');
         data.append ("file", event.target.files[0]);
         console.log('FormData:', event.target.files[0]);
 
         var random = getRandomArbitrary(0, 999);
     
-        var avatar = props.auth.avatar;
-        var nombre = props.auth.nombres;
+        var avatar = estado.auth.userAuth.avatar;
+        var nombre = estado.auth.userAuth.nombres;
         var type = event.target.files[0].type;
 
         function typeImage(image){
@@ -448,7 +396,7 @@ const FooterChatOpen = (props) => {
             }
         }
 
-        axios.post(API.urlApi+'sendMessageFile', data, headers).then(response => {   
+        axios.post(process.env.REACT_APP_URL_API+'sendMessageFile', data, headers).then(response => {   
             if(response.data.res){
                 console.log('go:', response.data);
                 $("#div_messa_img_"+random).removeClass('bloqueodiv'); 

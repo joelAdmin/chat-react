@@ -10,7 +10,7 @@ const ListConversationAudio = (props) => {
         let avatar = IMG;
         let nombre = '';
 
-        if((parseInt(props.values.emisor_id) !== parseInt(estado.auth.userAuth.usuario_id))){
+        if((parseInt(props.values.receptor_id) !== parseInt(estado.auth.userAuth.usuario_id))){
             claseCss = 'right';
             avatar   = (props.values.avatar_receptor == null)?IMG:estado.auth.userAuth.avatar;
             nombre   = estado.auth.userAuth.nombres;
