@@ -132,8 +132,8 @@ const Home = (props) => {
 				{
 					if((openChat.open == true) && (parseInt(data.chat_id) == parseInt(openChat.chat_id)))
 					{
-						console.log('conversacion abierta con el mismo chat y recibiendo ...');	
-						setStateReduxByAPIGetConversation(data.chat_id, data.emisor_id, auth);											
+						console.log('conversacion abierta con el mismo chat y recibiendo ...');							
+						setStateReduxByAPIGetConversation(data.chat_id, data.emisor_id, auth);										
 					}else
 					{
 						console.log('conversacion abierta con DIFERENTE <> CHAT y recibiendo ...');
@@ -153,6 +153,7 @@ const Home = (props) => {
 
 	const setStateReduxByAPIGetConversation = (chat_id, user_emisor, auth) => {			
 		getConversations(chat_id).then((response)=>{
+			$('.sendMessage').remove();	
 			dispatch(getConversation(response.result));
 			topScroll();	
 		}).catch((error)=>{

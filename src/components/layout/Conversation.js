@@ -127,7 +127,11 @@ const Conversation = (props) => {
     }
 
     const htmlMessageTemp =(vrandom,avatar, text) => {
-        const texto   =  '<li id="new'+vrandom+'" class="right opacity-5" style="list-style:none; display:none;">'+
+        let date = new Date()
+        let day = date.getDate()
+        let month = date.getMonth() + 1
+        let year = date.getFullYear()
+        const texto   =  '<li id="new'+vrandom+'" class="sendMessage right opacity-5" style="list-style:none; display:none;">'+
                             '<div class="conversation-list">'+
                                 '<div class="chat-avatar">'+
                                     '<img src="'+avatar+'" alt="" />'+
@@ -135,7 +139,12 @@ const Conversation = (props) => {
                                 '<div class="user-chat-content">'+                                            
                                     '<div class="ctext-wrap">'+
                                         '<div class="ctext-wrap-content">'+                                                     
-                                        '<p class="mb-0">'+text+'</p>'+                                                                                                 
+                                        '<div className="mb-0"><p></p>'+ 
+                                            text+'</div>'+
+                                        '<p className="chat-time mb-0">'+
+                                            '<i className="ri-time-line align-middle"></i>'+ 
+                                            `<span className="align-middle">${year}-0${month}-${day} 00:00:00</span>`+
+                                        '</p>'+                                                                                                
                                         '</div>'+
                                         '<div class="dropdown align-self-start">'+
                                             '<a class="dropdown-toggle" href="/#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
@@ -379,6 +388,7 @@ const Conversation = (props) => {
             }
         }else
         {
+            console.log('renderizando conversation');
             /**
              * vista principal solo se cargar al inicio cuando 
              * no hay accion de eventos

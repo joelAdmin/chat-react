@@ -51,6 +51,8 @@ const ChatOpenUser = (props) => {
     
     const handleOpenChat = async (chat_id) => {
         let user = {}
+        //para que se vaya cargando loading
+        dispatch(openChat({chat_id:chat_id, open:true, emisor_id:''}));
         await axios.get(API.urlApi+'getMessage/'+chat_id, headers).then(response => {
             const data =  response.data.result[0];
             if(estado.auth.userAuth.usuario_id === data.emisor_id)

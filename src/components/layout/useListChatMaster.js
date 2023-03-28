@@ -75,6 +75,10 @@ export default function useListChatMaster(props){
     }, []);
     
     const handleOpenChat = (chat_id) => { 
+        console.log('Abriendo sub chat ....');
+        //para que se vaya cargando loading
+        dispatch(openChat({chat_id:chat_id, open:true, emisor_id:''}));
+        console.log(estado);
         let user = {}
         getConversations(chat_id).then((response) => { 
             const data =  response.result[0];
