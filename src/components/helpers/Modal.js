@@ -10,10 +10,13 @@ export const ModalLink = function ModalBasic(props) {
   
     return (
       <>
-        <a className="nav-link" onClick={handleShow}>
-            <i className={props.icono}></i>
-        </a>  
+        {props.showLink === true &&
+          <a className="nav-link" onClick={handleShow}>
+              <i className={props.icono}></i>
+          </a> 
+        } 
         <Modal
+            id={props.id}
             backdrop={backdrop} 
             show={show}
             size={props.size}
@@ -23,7 +26,11 @@ export const ModalLink = function ModalBasic(props) {
           </Modal.Header>
           <Modal.Body>{props.body}</Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button 
+            id={'btnCloseModal'+props.id}
+            variant="secondary" 
+            onClick={handleClose}
+            >
               Cerrar
             </Button>
             {/*<Button variant="primary" onClick={handleClose}>

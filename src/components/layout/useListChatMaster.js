@@ -61,18 +61,22 @@ export default function useListChatMaster(props){
     
     const subChat = (emisor_id) => {
         //setReduxStateCollapse(emisor_id);
-        loadSubMenu(emisor_id);        
-        getSubChats(emisor_id).then((response)=>{
-			dispatch(getSubChatsMaster(response.result));
-            setloadSubChat(true);
-		}).catch((error)=>{
-			console.log(error);
-		});
+        loadSubMenu(emisor_id);
+        if(parseInt(emisor_id) > 0)
+        {
+            getSubChats(emisor_id).then((response)=>{
+                dispatch(getSubChatsMaster(response.result));
+                setloadSubChat(true);
+            }).catch((error)=>{
+                console.log(error);
+            });
+        }        
     }
 
     useEffect(() => {
-      console.log('Cargando submenu');
-    }, []);
+        console.log('Cargando submenu');
+        console.log('Cargando submenu emisorId:'+emisorId);
+    }, [emisorId]);
     
     const handleOpenChat = (chat_id) => { 
         console.log('Abriendo sub chat ....');
@@ -157,8 +161,8 @@ export default function useListChatMaster(props){
                         </a>
                         <div className="filterColllapse collapse" data-emisor={value.emisor_id} id={'collapseExample_'+value.emisor_id} data-parent="#accordion">
                             <div className="card card-body">
-                                <ol className="list-unstyled">
-                                    {loadSubChat?
+                                <ol className="list-unstyled">{console.log('Get subMenu')} {console.log(Object.values(estado.chat.getSubChatsMaster).length)} 
+                                    {loadSubChat ?
                                         Object.values(estado.chat.getSubChatsMaster).map((subchatmaster, key2) => {
                                             return (
                                                     <li key={random + key2} className="unread border p-1">

@@ -1,9 +1,11 @@
-import React, {Component} from "react";
+import React, {useState, useEffect} from 'react';
 import {IMG} from '../lib/Lib';
 import $ from 'jquery';
-class HeadChatOpen extends Component {
+import {useSelector, useDispatch} from 'react-redux';
 
-    handleShowViewUserTo = () => {
+const HeadChatOpen = (props) => {
+    const estado = useSelector((state) => state);
+    const handleShowViewUserTo = () => {
         if($('#to-user-profile-sidebar').css('display')=='none'){
             $('#to-user-profile-sidebar').show(200);
         }else{
@@ -11,9 +13,9 @@ class HeadChatOpen extends Component {
         }
     }
 
-    render(){return(
-        <React.Fragment>
-            {this.props.conversations.length > 0 &&                    
+    return(
+        <React.Fragment>{console.log(estado)}
+            {props.conversations.length > 0 &&                    
             <div className="row align-items-center">
                 <div className="col-sm-4 col-8">
                     <div className="media align-items-center">
@@ -21,14 +23,14 @@ class HeadChatOpen extends Component {
                             <a href="/#"  className="user-chat-remove text-muted font-size-16 p-2"><i className="ri-arrow-left-s-line"></i></a>
                         </div>
                         <div className="mr-3">
-                            {Object(this.props.userTo).nombre !== 'undefined' &&
-                                <img src={(Object(this.props.userTo).avatar !== null) ? Object(this.props.userTo).avatar : IMG} className="rounded-circle avatar-xs" alt="" />
+                            {Object(props.userTo).nombre !== 'undefined' &&
+                                <img src={(Object(props.userTo).avatar !== null) ? Object(props.userTo).avatar : IMG} className="rounded-circle avatar-xs" alt="" />
                             }                                            
                         </div>
-                        <div className="media-body overflow-hidden">{this.props.parent.openchat===true && <b>gggggg</b>}
+                        <div className="media-body overflow-hidden">{props.parent.openchat===true && <b>gggggg</b>}
                             <h5  className="font-size-16 mb-0 text-truncate">
-                                <a href="/#" title="Perfil" onClick={this.handleShowViewUserTo} className="text-reset user-profile-show userToProfileShow">
-                                    {Object(this.props.userTo).nombre} {Object(this.props.userTo).apellido}
+                                <a href="/#" title="Perfil" onClick={handleShowViewUserTo} className="text-reset user-profile-show userToProfileShow">
+                                    {Object(props.userTo).nombre} -- {Object(props.userTo).apellido}
                                 </a> 
                                 <i className="ri-record-circle-fill font-size-10 text-success d-inline-block ml-1"></i>
                             </h5>
@@ -72,6 +74,6 @@ class HeadChatOpen extends Component {
             </div> 
         }
         </React.Fragment>
-    )}
+    )
 }
 export default HeadChatOpen;

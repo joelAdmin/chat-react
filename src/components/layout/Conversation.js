@@ -113,7 +113,7 @@ const Conversation = (props) => {
             $("#chat-conversation-list").append(text);
             $('#new'+vrandom).toggle({height:1000});
             topScroll();            
-            axios.post(API.urlApi+'sendMessage', formData, headers).then(response => {            
+            axios.post(process.env.REACT_APP_URL_API+'sendMessage', formData, headers).then(response => {            
                 if(response.data.res){
                     console.log('send message ...');   
                     $('#new'+vrandom).removeClass("opacity-5");                                 

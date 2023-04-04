@@ -73,6 +73,60 @@ export const validator = (responseErrors, classFrom) => {
     }
 }
 
+const limpiarFormulario = (form) => {
+    
+    form.reset();
+    form.classList.remove('was-validated');
+}
+
+export const validatorBootstrap = (responseErrors, classFrom) => {
+    const forms = document.querySelectorAll(classFrom);
+    const form  = forms[0];
+    console.log(form);
+    if(Object.keys(responseErrors).length > 0)
+    {
+        form.classList.add('was-validated');
+        
+        [...form.elements].forEach((input) => {
+            if(input.name !== '')
+            {
+                console.log('NOO erroresssss');
+                console.log(input.name);
+                document.getElementById('feedback_'+input.name).innerHTML= '';
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                //document.getElementsByClassName(input.name)[0].innerHTML= '';
+            }                                             
+        }); 
+        console.log('responseErrors');
+        console.log(responseErrors);
+        Object.entries(responseErrors).forEach(entry => {
+            const [key, value] = entry;
+            console.log('erroresssss');
+            console.log(key);
+            if(key !== '')
+            {
+                var myInput = document.getElementById(key);
+                myInput.classList.remove('is-valid');
+                myInput.classList.add('is-invalid');
+                myInput.required = true;
+                document.getElementById('feedback_'+key).innerHTML= value;
+            }
+        });
+    }else
+    {
+        [...form.elements].forEach((input) => {
+            if(input.name !== '')
+            {
+                document.getElementById('feedback_'+input.name).innerHTML= '';
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                //document.getElementsByClassName(input.name)[0].innerHTML= '';
+            }                                             
+        });                
+    }
+}
+
 export const ECHO = new Echo({
     broadcaster:process.env.REACT_APP_BROADCASTER,    
     key:process.env.REACT_APP_KEY,

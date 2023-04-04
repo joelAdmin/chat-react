@@ -70,7 +70,7 @@ const SidebarMenu = (props) => {
                                 ventana modal de bootstrap a la vez recibe un componente para mostrar en el body del modal mediante
                                 la props body
                             */}
-                            <ModalLink show={false} body={<NewConsulta />} backdrop="static" size="xl" icono="ri-add-circle-line" title="Nuevo radicado" />
+                            <ModalLink id="modalNewConsulta" showLink={true} show={false} body={<NewConsulta />} backdrop="static" size="xl" icono="ri-add-circle-line" title="Nuevo radicado" />
                         </li>
                     }
                     <li className="nav-item dropdown profile-user-dropdown d-inline-block d-lg-none">
