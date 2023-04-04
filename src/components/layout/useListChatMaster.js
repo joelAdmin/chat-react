@@ -78,8 +78,8 @@ export default function useListChatMaster(props){
         console.log('Cargando submenu emisorId:'+emisorId);
     }, [emisorId]);
     
-    const handleOpenChat = (chat_id) => { 
-        console.log('Abriendo sub chat ....');
+    const handleOpenChat = (chat) => { 
+        let chat_id = chat.chat_id;
         //para que se vaya cargando loading
         dispatch(openChat({chat_id:chat_id, open:true, emisor_id:''}));
         console.log(estado);
@@ -123,7 +123,7 @@ export default function useListChatMaster(props){
                 dispatch(loading(true));  
             }
             
-            dispatch(openChat({chat_id:chat_id, open:true, emisor_id:user.usuario_id})); //validat emisor_id para usuriocliente
+            dispatch(openChat({chat_id:chat_id, open:true, emisor_id:user.usuario_id, cargo:chat.cargo, observacion:chat.observacion, nro_contacto:chat.nro_contacto, nombre_solicitante:chat.nombre_solicitante})); //validat emisor_id para usuriocliente
             dispatch(infoUserTo(user));//actualizar stado de userTo del chat redux
             dispatch(getConversation(response.result));//actualizar stado de conversation redux
 
@@ -163,10 +163,10 @@ export default function useListChatMaster(props){
                             <div className="card card-body">
                                 <ol className="list-unstyled">{console.log('Get subMenu')} {console.log(Object.values(estado.chat.getSubChatsMaster).length)} 
                                     {loadSubChat ?
-                                        Object.values(estado.chat.getSubChatsMaster).map((subchatmaster, key2) => {
+                                        Object.values(estado.chat.getSubChatsMaster).map((subchatmaster, key2) => { console.log('subchatmaster');console.log(subchatmaster);
                                             return (
                                                     <li key={random + key2} className="unread border p-1">
-                                                        <a href="/#" onClick={()=>{handleOpenChat(subchatmaster.chat_id)}} className="p-1">
+                                                        <a href="/#" onClick={()=>{handleOpenChat(subchatmaster)}} className="p-1">
                                                             <div className="media">
                                                                 <div className="chat-user-img align-self-center mr-3">
                                                                     <span className="badge badge-pill ml-3 z-index-2 position-absolute text-default bg-danger text-white ">{(subchatmaster.num_mensajes > 0)?subchatmaster.num_mensajes:''}</span><i className="fa fa-envelope fa-2x"></i> 

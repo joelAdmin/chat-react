@@ -83,7 +83,6 @@ const Home = (props) => {
 	},[chat.openChat]);	
 
 	useEffect(() => {
-		console.log('Actualizando conversation');	
 		topScroll();
 	},[estado.conversation.getConversation]);
 
@@ -127,7 +126,6 @@ const Home = (props) => {
 		{
 			ECHO.private(`new-message.${auth.userAuth.usuario_id}`).listen('.NewMessage', (data) => {
 				console.log('ECHO nuevo mensaje open chat_id:'+Object.entries(openChat).length);
-				console.log(data);
 				if(Object.entries(openChat).length > 0)
 				{
 					if((openChat.open == true) && (parseInt(data.chat_id) == parseInt(openChat.chat_id)))
@@ -164,7 +162,6 @@ const Home = (props) => {
 	const setStateReduxByAPIGetChats = (auth) => {
 		if(auth.access == 'Mg==')
 		{
-			console.log('usuario chats api');
 			getApiChatsU(auth.userAuth.usuario_id).then(response => {
 				dispatch(getChatsUser(response.result));
 			}).catch((error) => {

@@ -7,10 +7,13 @@ import {validatorBootstrap, headers} from '../lib/Lib';
 import Swal from 'sweetalert2';
 import $ from 'jquery';
 import {useSelector, useDispatch} from 'react-redux';
+import {openChat, getChatsUser, getChatsMaster, getSubChatsMaster} from '../../features/user/chatSlice';
+import {getChatsU as getApiChatsU, getChatsM as getApiChatsM} from '../helpers/Chat';
 
 export const NewConsulta =()=> {
     const cookies = new Cookies();
     const userAuth = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
     const [form, setForm] = useState({
         emisorId:userAuth.userAuth.usuario_id,
         tipoConsulta:'',
@@ -39,18 +42,27 @@ export const NewConsulta =()=> {
             }).then(response => {            
                 if(response.data.res)
                 { 
-                    setValidated(false);   
+                    setValidated(false);  
+                    //se limpia el formulario y se procede a cerrar 
                     formulario.reset();
                     formulario.classList.remove('was-validated');
                     const btnMiModal = document.getElementById('btnCloseModalmodalNewConsulta');
                     btnMiModal.click();
+
+                    //actualizo las variables de estado para lista de chats
+                    getApiChatsU(userAuth.userAuth.usuario_id).then(resp => {
+                        dispatch(getChatsUser(resp.result));
+                    }).catch(error => {
+                        console.log('Error 0001x consulta chat user', error);
+                    });
+
                     Swal.fire({
                         position: 'top-end',
                         icon: 'success',
                         title: 'Guardado!',
                         text: response.data.message,
                         showConfirmButton: false,
-                        timer: 11500
+                        timer: 1500
                     });                    
                 }else
                 {

@@ -5,6 +5,9 @@ import {useSelector, useDispatch} from 'react-redux';
 
 const HeadChatOpen = (props) => {
     const estado = useSelector((state) => state);
+    const contacto = estado.chat.openChat.nro_contacto ? `Cargo: ${estado.chat.openChat.nro_contacto}`:'';
+    const cargo = estado.chat.openChat.cargo ? `Cargo: ${estado.chat.openChat.cargo}`:'';
+    const title = `${estado.chat.openChat.observacion} ${cargo} ${contacto}  Solicitante: ${estado.chat.openChat.nombre_solicitante}`
     const handleShowViewUserTo = () => {
         if($('#to-user-profile-sidebar').css('display')=='none'){
             $('#to-user-profile-sidebar').show(200);
@@ -14,7 +17,7 @@ const HeadChatOpen = (props) => {
     }
 
     return(
-        <React.Fragment>{console.log(estado)}
+        <React.Fragment>
             {props.conversations.length > 0 &&                    
             <div className="row align-items-center">
                 <div className="col-sm-4 col-8">
@@ -23,14 +26,14 @@ const HeadChatOpen = (props) => {
                             <a href="/#"  className="user-chat-remove text-muted font-size-16 p-2"><i className="ri-arrow-left-s-line"></i></a>
                         </div>
                         <div className="mr-3">
-                            {Object(props.userTo).nombre !== 'undefined' &&
-                                <img src={(Object(props.userTo).avatar !== null) ? Object(props.userTo).avatar : IMG} className="rounded-circle avatar-xs" alt="" />
+                            {estado.userTo.nombre !== 'undefined' &&
+                                <img src={estado.userTo.infoUserTo.avatar !== null ? estado.userTo.infoUserTo.avatar : IMG} className="rounded-circle avatar-xs" alt="avatar" />
                             }                                            
                         </div>
-                        <div className="media-body overflow-hidden">{props.parent.openchat===true && <b>gggggg</b>}
+                        <div className="media-body overflow-hidden">{console.log(estado)}
                             <h5  className="font-size-16 mb-0 text-truncate">
-                                <a href="/#" title="Perfil" onClick={handleShowViewUserTo} className="text-reset user-profile-show userToProfileShow">
-                                    {Object(props.userTo).nombre} -- {Object(props.userTo).apellido}
+                                <a href="/#" title={title} onClick={handleShowViewUserTo} className="text-reset user-profile-show userToProfileShow">
+                                   {title}
                                 </a> 
                                 <i className="ri-record-circle-fill font-size-10 text-success d-inline-block ml-1"></i>
                             </h5>

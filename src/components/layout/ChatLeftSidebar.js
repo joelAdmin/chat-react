@@ -21,7 +21,7 @@ class ChatLeftSidebar extends Component{
         });
     }  
     
-    render(){ 
+    render(){ console.log('this.props');console.log(this.props);
         return (
             <div onClick={this.props.callbackCloseEmjoi} className="chat-leftsidebar mr-lg-1">
 

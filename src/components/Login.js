@@ -107,8 +107,6 @@ import {SpinnerLoading as SpinnerLoad} from './helpers/SpinnerLoading';
                         },
                         data: {},
                     }).then(resp => {  
-                        //console.log('entro');
-                        //console.log(resp);
                         dispatch(getChatsUser(resp.data.result));
                         navigate("/", {
                             state:{
@@ -118,7 +116,6 @@ import {SpinnerLoading as SpinnerLoad} from './helpers/SpinnerLoading';
                             }
                         })
                     }).catch(function (error) {
-                        //getErrorAxios();
                         console.log(error);
                     })
                     /*getApiChatsU(response.data.user.usuario_id).then(resp => {

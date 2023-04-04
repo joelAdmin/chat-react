@@ -62,7 +62,6 @@ const FooterChatOpen = (props) => {
     });
 
     const enabledBtnAudio = (value) => {
-        console.log('value:'+value);
         if(value === '<p><br></p>' || value == '')
         {
             $('.btn-audio').show();
@@ -159,8 +158,7 @@ const FooterChatOpen = (props) => {
                         var base64data;
                         reader.readAsDataURL(blob);
                         reader.onloadend = function() {
-                            base64data = reader.result;  
-                            console.log(estado);                                                    
+                            base64data = reader.result;                                                    
                             axios.post(process.env.REACT_APP_URL_API+'sendMessageAudio', {
                                 mensaje:'',
                                 emisor_id: estado.auth.userAuth.usuario_id,
@@ -283,7 +281,6 @@ const FooterChatOpen = (props) => {
         data.append("receptor_id", estado.chat.openChat.emisor_id);
         data.append("ogg", '');
         data.append ("file", event.target.files[0]);
-        console.log('FormData:', event.target.files[0]);
 
         var random = getRandomArbitrary(0, 999);
     
@@ -398,7 +395,6 @@ const FooterChatOpen = (props) => {
 
         axios.post(process.env.REACT_APP_URL_API+'sendMessageFile', data, headers).then(response => {   
             if(response.data.res){
-                console.log('go:', response.data);
                 $("#div_messa_img_"+random).removeClass('bloqueodiv'); 
                 $("#ul_options1_"+random).hide(100); 
                 $("#ul_options2_"+random).show(100); 

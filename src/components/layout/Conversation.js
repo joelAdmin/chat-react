@@ -46,18 +46,13 @@ const Conversation = (props) => {
 
 
     useEffect(() => {     
-        //handleSendMessage('');  
-        console.log('mensaje[] :'+form.mensaje); 
+        
         if(form.mensaje.length > 0){
             console.log('Form actualizando2'); 
-            console.log(form);
-            //handleSubmit();
         }     
     }, []);
 
     useEffect(() => {  
-        console.log('mensaje :'+form.mensaje);  
-
         //handleSendMessage('');
         if(form.mensaje.length > 0){
             //console.log('Form actualizando'); 
@@ -98,7 +93,6 @@ const Conversation = (props) => {
     }
 
     const handleSubmit = (value) => {
-        console.log(estado);
         let formData = {
             emisor_id: estado.auth.userAuth.usuario_id,
             receptor_id:estado.chat.openChat.emisor_id,
@@ -114,8 +108,7 @@ const Conversation = (props) => {
             $('#new'+vrandom).toggle({height:1000});
             topScroll();            
             axios.post(process.env.REACT_APP_URL_API+'sendMessage', formData, headers).then(response => {            
-                if(response.data.res){
-                    console.log('send message ...');   
+                if(response.data.res){  
                     $('#new'+vrandom).removeClass("opacity-5");                                 
                 }else{
                     console.log('error al enviar mensaje');
@@ -388,7 +381,6 @@ const Conversation = (props) => {
             }
         }else
         {
-            console.log('renderizando conversation');
             /**
              * vista principal solo se cargar al inicio cuando 
              * no hay accion de eventos

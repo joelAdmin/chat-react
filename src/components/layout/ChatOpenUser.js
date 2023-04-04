@@ -49,8 +49,9 @@ const ChatOpenUser = (props) => {
         }
     }
     
-    const handleOpenChat = async (chat_id) => {
+    const handleOpenChat = async (chat) => {
         let user = {}
+        let chat_id = chat.chat_id;
         //para que se vaya cargando loading
         dispatch(openChat({chat_id:chat_id, open:true, emisor_id:''}));
         await axios.get(API.urlApi+'getMessage/'+chat_id, headers).then(response => {
@@ -94,7 +95,7 @@ const ChatOpenUser = (props) => {
                 dispatch(loading(true));  
             }
             
-            dispatch(openChat({chat_id:chat_id, open:true, emisor_id:user.usuario_id})); //validat emisor_id para usuriocliente
+            dispatch(openChat({chat_id:chat_id, open:true, emisor_id:user.usuario_id, cargo:chat.cargo, observacion:chat.observacion, nro_contacto:chat.nro_contacto, nombre_solicitante:chat.nombre_solicitante})); //validat emisor_id para usuriocliente
             dispatch(infoUserTo(user));//actualizar stado de userTo del chat redux
             dispatch(getConversation(response.data.result));//actualizar stado de conversation redux
 
@@ -102,9 +103,6 @@ const ChatOpenUser = (props) => {
             console.log(error);
         });
     }
-    
-    console.log(props);
-    console.log(estado);
 
     const preRender = () => {
         return (<>
@@ -138,7 +136,7 @@ const ChatOpenUser = (props) => {
                                         Object.values(estado.chat.getChatsUser).map((value, key) => {
                                             return (
                                                 <li key={key} className="unread">
-                                                    <a href="/#" onClick={()=>{handleOpenChat(value.chat_id)}} >
+                                                    <a href="/#" onClick={()=>{handleOpenChat(value)}} >
                                                         <div className="media">{/* away online offline */}
                                                             <div className={value.conectado > 0 ? "chat-user-img online align-self-center mr-3" : "chat-user-img offline align-self-center mr-3"} >
                                                                 <img src={value.avatar !== '' ? value.avatar : IMG } className="rounded-circle avatar-xs" alt=""/>
