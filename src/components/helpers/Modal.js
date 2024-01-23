@@ -42,6 +42,44 @@ export const ModalLink = function ModalBasic(props) {
     );
 }
 
+export const ModalAccept = function ModalBasic(props) {
+  const [show, setShow] = useState(props.show);
+  const [backdrop, setBackdrop] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => {setShow(true); setBackdrop(props.backdrop);}
+
+  return (
+    <>
+      {props.showLink === true &&
+        <a className="nav-link" onClick={handleShow}>
+            <i className={props.icono}></i>
+        </a> 
+      } 
+      <Modal
+          id={props.id}
+          backdrop={backdrop} 
+          show={show}
+          size={props.size}
+          onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>{props.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{props.body}</Modal.Body>
+        <Modal.Footer>
+          <Button 
+          id={'btnCloseModal'+props.id}
+          variant="secondary" 
+          onClick={props.handleAction}
+          >
+            {props.titleBtn}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
+
 export const ModalBasic = function ModalBasic(props) {
     const [show, setShow] = useState(props.show);
   

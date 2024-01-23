@@ -24,7 +24,7 @@ const App = () => {
   const [auth, setAuth] = useState({});
 
   const addStoreInfoUser = () => {
-    console.log('addStoreInfoUser')
+    //console.log('addStoreInfoUser')
     getuserAuth().then(response => {
       dispatch(setLogin({
         access:response.access,
@@ -49,11 +49,12 @@ const App = () => {
   }
 
   const setUserAuth = () => {
-    console.log('ejecuntando ....');
+    //console.log('ejecuntando ....');
     const user_id = cookies.get('usuario_id');
     axios.get(API.urlApi+'user/'+user_id, headers).then(response => {
         if(response.data.res)
-        { console.log(response)    
+        { 
+          //console.log(response)    
           dispatch(setLogin({
             access:response.data.access,
             userAuth:response.data.result
@@ -69,7 +70,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    console.log('inicinado..')
+    //console.log('inicinado..')
     //loadRender()
     if(isAuth())
     {

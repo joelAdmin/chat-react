@@ -12,7 +12,6 @@ import {infoUserTo} from '../../features/user/userToSlice'
 import {getConversation} from '../../features/user/conversationSlice';
 
 import axios from "axios";
-import Cookies from 'universal-cookie';
 import $, { contains } from 'jquery';
 
 export default function useListChatMaster(props){
@@ -23,8 +22,14 @@ export default function useListChatMaster(props){
 
     const dispatch = useDispatch();
     const estado = useSelector((state) => state);
-
-    const cookies = new Cookies();
+    
+    if (estado.chat.getSubChatsMaster !== undefined && estado.chat.getSubChatsMaster !== null) {
+        // Acceder a las propiedades de miObjeto aquí
+       // console.log('estado');
+       // console.log(estado);
+        //console.log(estado.chat.getSubChatsMaster)
+        //console.log(Object.values(estado.chat.getSubChatsMaster).length)
+    }
 
     //validamos si es el mismo emisor
     const loadSubMenu = (emisor_id) => {
@@ -46,15 +51,15 @@ export default function useListChatMaster(props){
        
         if ($("#collapseExample_"+emisor_id).hasClass("show")) {
             // La clase miClase está definida en el div
-            console.log('La clase show está definida en el div');
+            //console.log('La clase show está definida en el div');
             dispatch(getCollapseChat({}));
         } else {
             // La clase miClase no está definida en el div
             if(Object.entries(estado.chat.getCollapseChat).length > 0)
             {
-                console.log('La clase show está definida en CHAT  DIFERENTE en el div');
+                //console.log('La clase show está definida en CHAT  DIFERENTE en el div');
             }else{
-                console.log('1ER La clase show no está definida en el div');
+                //console.log('1ER La clase show no está definida en el div');
             }           
         }
     }
@@ -74,15 +79,14 @@ export default function useListChatMaster(props){
     }
 
     useEffect(() => {
-        console.log('Cargando submenu');
-        console.log('Cargando submenu emisorId:'+emisorId);
+        //console.log('Cargando submenu');
+        //console.log('Cargando submenu emisorId:'+emisorId);
     }, [emisorId]);
     
     const handleOpenChat = (chat) => { 
         let chat_id = chat.chat_id;
         //para que se vaya cargando loading
         dispatch(openChat({chat_id:chat_id, open:true, emisor_id:''}));
-        console.log(estado);
         let user = {}
         getConversations(chat_id).then((response) => { 
             const data =  response.result[0];
@@ -161,9 +165,9 @@ export default function useListChatMaster(props){
                         </a>
                         <div className="filterColllapse collapse" data-emisor={value.emisor_id} id={'collapseExample_'+value.emisor_id} data-parent="#accordion">
                             <div className="card card-body">
-                                <ol className="list-unstyled">{console.log('Get subMenu')} {console.log(Object.values(estado.chat.getSubChatsMaster).length)} 
+                                <ol className="list-unstyled"> 
                                     {loadSubChat ?
-                                        Object.values(estado.chat.getSubChatsMaster).map((subchatmaster, key2) => { console.log('subchatmaster');console.log(subchatmaster);
+                                        Object.values(estado.chat.getSubChatsMaster).map((subchatmaster, key2) => { 
                                             return (
                                                     <li key={random + key2} className="unread border p-1">
                                                         <a href="/#" onClick={()=>{handleOpenChat(subchatmaster)}} className="p-1">

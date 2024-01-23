@@ -32,10 +32,8 @@ import {SpinnerLoading as SpinnerLoad} from './helpers/SpinnerLoading';
     const handleSubmitLista = () => {}
 
     useEffect(()=>{
-        console.log('iniciando login');
         if(typeof cookies.get('token') == 'undefined')
 		{
-            console.log('limpiando store login');
             cookies.remove('usuario_id', {path: "/"});
             cookies.remove('token', {path: "/"});   
             localStorage.clear(); 
@@ -86,9 +84,9 @@ import {SpinnerLoading as SpinnerLoad} from './helpers/SpinnerLoading';
                  * si obtendo una respuesta creo las cookies 
                  * con el token de sesiòn y redirecciono a /
                  */
-                //console.log(response);
                 cookies.set('token', response.data.token, { path: '/' });
                 cookies.set('usuario_id', response.data.user.usuario_id, { path: '/' });
+                cookies.set('alert', true, { path: '/' });
 
                 dispatch(setLogin({
                     access:response.data.access,
@@ -97,8 +95,7 @@ import {SpinnerLoading as SpinnerLoad} from './helpers/SpinnerLoading';
 
                 if(response.data.access == 'Mg==')
                 {
-                    console.log('Es un usuario cliente');
-                    console.log(response);
+                    //console.log('Es un usuario cliente');
                     axios.get(process.env.REACT_APP_URL_API+'chatsAuthU/'+response.data.user.usuario_id, {
                         headers: {
                           responseType: 'blob',
@@ -118,12 +115,9 @@ import {SpinnerLoading as SpinnerLoad} from './helpers/SpinnerLoading';
                     }).catch(function (error) {
                         console.log(error);
                     })
-                    /*getApiChatsU(response.data.user.usuario_id).then(resp => {
-                        dispatch(getChatsUser(resp.result));
-                    });*/
                 }else if(response.data.access == 'MA==')
                 {
-                    console.log('Es un usuario manager');
+                    //console.log('Es un usuario manager');
                     axios.get(process.env.REACT_APP_URL_API+'chatsAuthM/'+response.data.user.usuario_id, {
                         headers: {
                           responseType: 'blob',
@@ -132,7 +126,6 @@ import {SpinnerLoading as SpinnerLoad} from './helpers/SpinnerLoading';
                         },
                         data: {},
                     }).then(resp => {  
-                        console.log(resp);
                         dispatch(getChatsMaster(resp.data.result));
                         navigate("/", {
                             state:{
@@ -159,10 +152,9 @@ import {SpinnerLoading as SpinnerLoad} from './helpers/SpinnerLoading';
                  * desde la configuración del modelo y @property {data.message} es un mensaje 
                  * personalizado en caso de no ingresar los credenciales correctos.
                  */
-                console.log('validando errores de inicio de sesion');
+                //console.log('validando errores de inicio de sesion');
                 validator(response.data.errors, '.loginForm');
-                if(response.data.message){       
-                    console.log('validando errores de inicio de sesion 3');         
+                if(response.data.message){               
                     getMessage(response.data.message);
                 }   
             }        

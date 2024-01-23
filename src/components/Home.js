@@ -3,23 +3,22 @@ import { useNavigate, useLocation} from "react-router-dom";
 import SidebarMenu from './layout/SidebarMenu.js';
 import ChatLeftSidebar from './layout/ChatLeftSidebar.js';
 import Conversation from './layout/Conversation.js';
-import {getChatsU as getApiChatsU, getChatsM as getApiChatsM} from './helpers/Chat';
+import {getChatsU as getApiChatsU, getChatsM as getApiChatsM, getSubChats} from './helpers/Chat';
+import {ModalLink, ModalAccept} from './helpers/Modal';
 import {getConversations} from './helpers/Conversations';
 import {ECHO} from './lib/Lib';
 import axios from 'axios';
 import $, { contains } from 'jquery';
-import {getSubChats} from './helpers/Chat';
+
 
 import {useSelector, useDispatch} from 'react-redux';
 import {setLogin} from '../features/user/authSlice';
 import {openChat, getChatsUser, getChatsMaster, getSubChatsMaster} from '../features/user/chatSlice';
 import {getConversation} from '../features/user/conversationSlice';
 import {infoUserTo} from '../features/user/userToSlice';
-
-import Cookies from 'universal-cookie';
+import {cookies} from './lib/Lib';
 
 const Home = (props) => {
-	const cookies = new Cookies();
     const location = useLocation();
 	const navigate = useNavigate()
 	const dispatch = useDispatch();
@@ -29,6 +28,41 @@ const Home = (props) => {
 
 	const [openchat, setOpenchat] = useState(false);
 	const [getChatsU, setGetChatsU] = useState({});//pasar a global con redux
+
+	const updateStoreChatsAndUsers = () => {
+		const getStoreUserAuth = JSON.parse(localStorage.getItem('userAuth'));
+			setStateReduxByLocalStoreGetChats(getStoreUserAuth);			
+			dispatch(setLogin({
+				access:getStoreUserAuth.access,
+				userAuth:getStoreUserAuth.userAuth
+			}));
+
+			echoNewMessageInput({
+				access:getStoreUserAuth.access,
+				userAuth:getStoreUserAuth.userAuth
+			}, {});
+	}
+
+	const updateLocalStoreChatsAndUsers = () => {
+		localStorage.setItem('userAuth', JSON.stringify({
+			access:location.state.access,
+			userAuth:location.state.userAuth
+		})); 
+
+		localStorage.setItem('chats', JSON.stringify(location.state.chats));
+	}
+
+	const handleAccept = () => {
+		cookies.set('alert', false);
+		window.location.href = "/";
+	};
+
+	const showAlert = () => {
+		if(cookies.get('alert') === 'true')
+		{
+			return <ModalAccept handleAction={handleAccept} show={true} titleBtn="Aceptar" title="Información" body={process.env.REACT_APP_MESSAGE_WELCOME} />
+		}		
+	}
 	
     useEffect(() => { 
 		//si nohay token de se redirecciona a login
@@ -40,17 +74,10 @@ const Home = (props) => {
 			/** cuando actualizamos o recargamos la pagina
 			 *  y se perdien la variables de estado 
 			 **/
-			const getStoreUserAuth = JSON.parse(localStorage.getItem('userAuth'));
-			setStateReduxByLocalStoreGetChats(getStoreUserAuth);			
-			dispatch(setLogin({
-				access:getStoreUserAuth.access,
-				userAuth:getStoreUserAuth.userAuth
-			}));
+			
+			updateStoreChatsAndUsers()
 
-			echoNewMessageInput({
-				access:getStoreUserAuth.access,
-				userAuth:getStoreUserAuth.userAuth
-			}, {});
+			
 		}else
 		{
 			/**ingresamos desde formulario de login 
@@ -65,11 +92,7 @@ const Home = (props) => {
 			
 			setStateReduxByLocationGetChats();			
 
-			localStorage.setItem('userAuth', JSON.stringify({
-				access:location.state.access,
-				userAuth:location.state.userAuth
-			})); 
-			localStorage.setItem('chats', JSON.stringify(location.state.chats));	
+			updateLocalStoreChatsAndUsers()
 
 			echoNewMessageInput({
 				access:location.state.access,
@@ -125,20 +148,19 @@ const Home = (props) => {
 		if(auth.access.length > 0)
 		{
 			ECHO.private(`new-message.${auth.userAuth.usuario_id}`).listen('.NewMessage', (data) => {
-				console.log('ECHO nuevo mensaje open chat_id:'+Object.entries(openChat).length);
 				if(Object.entries(openChat).length > 0)
 				{
 					if((openChat.open == true) && (parseInt(data.chat_id) == parseInt(openChat.chat_id)))
 					{
-						console.log('conversacion abierta con el mismo chat y recibiendo ...');							
+						//console.log('conversacion abierta con el mismo chat y recibiendo ...');							
 						setStateReduxByAPIGetConversation(data.chat_id, data.emisor_id, auth);										
 					}else
 					{
-						console.log('conversacion abierta con DIFERENTE <> CHAT y recibiendo ...');
+						//console.log('conversacion abierta con DIFERENTE <> CHAT y recibiendo ...');
 					}
 				}else if(Object.entries(openChat).length === 0)
 				{
-					console.log('conversacion cerrada y recibiendo ...');
+					//console.log('conversacion cerrada y recibiendo ...');
 					setStateReduxByAPIGetChats(auth);
 					if(auth.access == 'MA==')
 					{
@@ -257,7 +279,8 @@ const Home = (props) => {
 	}
 
 	return (
-		<div className="layout-wrapper d-lg-flex" >				
+		<div className="layout-wrapper d-lg-flex" >	
+			{showAlert()}		
 			{sidebarMenu()}				
 			{chatLeftSidebar()}
 			{conversation()}

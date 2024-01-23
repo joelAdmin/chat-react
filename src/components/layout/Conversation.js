@@ -4,7 +4,7 @@ import ListConversationFile from './ListConversationFile.js';
 import ListConversationAudio from './ListConversationAudio.js';
 import FooterChatOpen from './FooterChatOpen.js';
 import HeadChatOpen from './HeadChatOpen.js';
-import {IMG, random, API, headers} from '../lib/Lib';
+import {IMG, random, API, cookies} from '../lib/Lib';
 import {SpinnerLoading as SpinnerLoad} from '../helpers/SpinnerLoading';
 import axios from 'axios';
 
@@ -20,6 +20,15 @@ const Conversation = (props) => {
 
     const estado = useSelector((state) => state);
     const dispatch = useDispatch();
+
+    const headers = {
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer '+cookies.get('token')
+        },
+        mode:'cors',
+        data: {},
+    }
 
     const [form, setForm] = useState({
         mensaje:'',

@@ -48,7 +48,7 @@ export const isNotAuth = () => {
 }
 
 export const validator = (responseErrors, classFrom) => {
-    console.log('validando errores de inicio de sesion2');
+    //console.log('validando errores de inicio de sesion2');
     const forms = document.querySelectorAll(classFrom);
     const form  = forms[0];
     if(Object.keys(responseErrors).length > 0){[...form.elements].forEach((input) => {
@@ -82,7 +82,7 @@ const limpiarFormulario = (form) => {
 export const validatorBootstrap = (responseErrors, classFrom) => {
     const forms = document.querySelectorAll(classFrom);
     const form  = forms[0];
-    console.log(form);
+    //console.log(form);
     if(Object.keys(responseErrors).length > 0)
     {
         form.classList.add('was-validated');
@@ -90,20 +90,20 @@ export const validatorBootstrap = (responseErrors, classFrom) => {
         [...form.elements].forEach((input) => {
             if(input.name !== '')
             {
-                console.log('NOO erroresssss');
-                console.log(input.name);
+                //console.log('NOO erroresssss');
+                //console.log(input.name);
                 document.getElementById('feedback_'+input.name).innerHTML= '';
                 input.classList.remove('is-invalid');
                 input.classList.add('is-valid');
                 //document.getElementsByClassName(input.name)[0].innerHTML= '';
             }                                             
         }); 
-        console.log('responseErrors');
-        console.log(responseErrors);
+        //console.log('responseErrors');
+        //console.log(responseErrors);
         Object.entries(responseErrors).forEach(entry => {
             const [key, value] = entry;
-            console.log('erroresssss');
-            console.log(key);
+            //console.log('erroresssss');
+            //console.log(key);
             if(key !== '')
             {
                 var myInput = document.getElementById(key);
@@ -143,7 +143,7 @@ export const ECHO = new Echo({
     enabledTransports: ['wss', 'ws'],
     auth: {
         headers: {
-           Authorization: "Bearer " +cookies.get('token'),
+           Authorization:"Bearer " +cookies.get('token'),
            Accept:"application/json",
         }
     },

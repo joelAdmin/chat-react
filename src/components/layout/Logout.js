@@ -7,7 +7,6 @@ const  Logout = () => {
     const navigate = useNavigate();
     const handleLogout =(e)=>{
         e.preventDefault();
-        console.log(cookies.get('token'));
         axios.get(API.urlApi+'logout', {
             headers: {
               responseType: 'blob',
@@ -16,10 +15,10 @@ const  Logout = () => {
             },
             data: {},
         }).then(response => {
-            console.log(response);
             if(response.data.res){  
                 cookies.remove('usuario_id', {path: "/"});
                 cookies.remove('token', {path: "/"});   
+                cookies.remove('alert', {path: "/"}); 
                 localStorage.clear();           
                 navigate('/login');
             }else{            

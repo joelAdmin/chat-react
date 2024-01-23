@@ -28,7 +28,6 @@ export const Dropdown = (props) =>  {
 }
 
 export const TextInput = (props) => {
-  //console.log(props.textMini);
   return (<>
     <Form.Label>{props.label}</Form.Label>
         <Form.Control

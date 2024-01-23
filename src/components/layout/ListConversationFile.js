@@ -45,7 +45,7 @@ const ListConversationFile = (props) => {
              link.setAttribute('download', 'file.pdf');
              document.body.appendChild(link);
              link.click();
-             console.log('imagen:', url);
+             //console.log('imagen:', url);
              setImgSrcTemp({imgSrcTemp:url});
          }).catch(error =>{
              console.log(error);

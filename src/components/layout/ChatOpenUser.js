@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {API, IMG, TIMERMESSAGE, headers} from '../lib/Lib';
+import {API, IMG, TIMERMESSAGE, cookies} from '../lib/Lib';
 import {SpinnerLoadingMinColor as SpinnerLoadColor} from '../helpers/SpinnerLoading';
 
 import {useSelector, useDispatch} from 'react-redux';
@@ -8,12 +8,20 @@ import {loading, openChat} from '../../features/user/chatSlice';
 import {infoUserTo} from '../../features/user/userToSlice'
 import {getConversation} from '../../features/user/conversationSlice';
 
-import Cookies from 'universal-cookie';
-
 const ChatOpenUser = (props) => {
+    const headers = {
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer '+cookies.get('token')
+        },
+        mode:'cors',
+        data: {},
+    }
     
     const dispatch = useDispatch();
     const estado = useSelector((state)=>state);
+    //console.log('INICIANDO COMPONENTE DE ABRIR CHAT USER');
+    //console.log(estado)
 
     const [userTo, setUserTo] = useState({});
     const [chats, setChats]   = useState({});

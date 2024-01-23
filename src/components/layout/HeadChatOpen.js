@@ -30,7 +30,7 @@ const HeadChatOpen = (props) => {
                                 <img src={estado.userTo.infoUserTo.avatar !== null ? estado.userTo.infoUserTo.avatar : IMG} className="rounded-circle avatar-xs" alt="avatar" />
                             }                                            
                         </div>
-                        <div className="media-body overflow-hidden">{console.log(estado)}
+                        <div className="media-body overflow-hidden">
                             <h5  className="font-size-16 mb-0 text-truncate">
                                 <a href="/#" title={title} onClick={handleShowViewUserTo} className="text-reset user-profile-show userToProfileShow">
                                    {title}
