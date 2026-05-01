@@ -60,7 +60,7 @@ Para que la conexión funcione correctamente, deben definirse las siguientes var
 ```env
 REACT_APP_URL_API=https://api-alp.jlssystem.com/api/
 REACT_APP_BROADCASTER=pusher
-REACT_APP_KEY=141115
+REACT_APP_KEY=123456
 REACT_APP_WS_HOST=wss.jlssystem.com
 REACT_APP_WS_PORT=6001
 REACT_APP_WSS_PORT=6001
