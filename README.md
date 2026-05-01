@@ -69,10 +69,46 @@ REACT_APP_AUTH_END_POINT=https://api-alp.jlssystem.com/api/broadcasting/auth
 
 ## 📂 Estructura del Proyecto
 
-- `/src/features/`: Slices de Redux (auth, chat, conversation).
-- `/src/components/layout/`: Componentes de la interfaz (Sidebar, Chat, Footer).
-- `/src/components/helpers/`: Lógica de negocio y llamadas a la API.
-- `/src/components/lib/`: Configuración centralizada (ECHO, Axios, Cookies).
+```text
+/
+├── .env                # Variables de entorno (API, WebSockets)
+├── package.json        # Dependencias y scripts del proyecto
+├── public/             # Archivos estáticos
+└── src/
+    ├── app/
+    │   └── store.js    # Configuración central de Redux Toolkit
+    ├── components/
+    │   ├── helpers/    # Funciones auxiliares y llamadas a API
+    │   ├── layout/     # Componentes visuales del chat
+    │   └── lib/        # Configuraciones base (Echo, Axios)
+    ├── features/
+    │   └── user/       # Redux Slices (Estado global)
+    ├── App.js          # Componente principal / Control de Auth
+    └── index.js        # Punto de entrada / Configuración de Rutas
+```
+
+### Detalles de Archivos Clave:
+
+- **`src/App.js`**: Controlador principal de autenticación. Gestiona el flujo de entrada y decide si mostrar el Login o el Home.
+- **`src/features/user/`**:
+    - `authSlice.js`: Gestiona los datos del usuario logueado y niveles de acceso.
+    - `chatSlice.js`: Controla la lista de chats activos y el estado del chat seleccionado.
+    - `conversationSlice.js`: Almacena el historial de mensajes de la conversación actual.
+- **`src/components/layout/`**:
+    - `Conversation.js`: El componente central que renderiza los mensajes y el formulario de envío.
+    - `ChatLeftSidebar.js`: Gestiona la lista lateral de contactos y conversaciones recientes.
+- **`src/components/lib/Lib.js`**: Configuración centralizada de Laravel Echo, Axios y manejo de cookies.
+
+## 🔄 Flujo de Datos
+
+1. **Autenticación**: Al iniciar, `App.js` verifica las cookies. Si hay un token válido, recupera el perfil del usuario y lo inyecta en el `authSlice` de Redux.
+2. **Carga de Contexto**: Dependiendo del rol del usuario (Maestro o Usuario estándar), se cargan las listas de chats correspondientes desde la API.
+3. **Comunicación en Tiempo Real**: 
+    - Al cargar `Home.js`, se activa la escucha en un canal privado de WebSockets.
+    - Cuando llega un evento `NewMessage`, el sistema verifica si el chatID coincide con el chat abierto.
+    - Si coincide, actualiza el `conversationSlice` para mostrar el mensaje instantáneamente.
+    - Si no coincide, actualiza los contadores o la lista en el `chatSlice`.
+4. **Envío de Mensajes**: El usuario envía un mensaje -> Se añade visualmente a la UI de forma optimista -> Se envía vía Axios al backend -> El backend emite el evento vía WebSockets para otros participantes.
 
 ## 🏃‍♂️ Instalación y Ejecución
 
