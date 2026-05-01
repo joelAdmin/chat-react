@@ -1,70 +1,85 @@
-# Getting Started with Create React App
+# Sistema de Chat de Soporte - Frontend (React)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este proyecto es una aplicación de chat de soporte al cliente desarrollada en React, diseñada para interactuar con un backend Laravel mediante una API REST y comunicación en tiempo real a través de WebSockets.
 
-## Available Scripts
+## 🚀 Tecnologías Principales
 
-In the project directory, you can run:
+- **Frontend:** React 17 (Hooks & Functional Components)
+- **Estado Global:** Redux Toolkit (@reduxjs/toolkit)
+- **Comunicación en Tiempo Real:** Laravel Echo & Pusher-js
+- **Peticiones HTTP:** Axios
+- **Estilos:** Bootstrap & JQuery (para animaciones y scroll)
+- **Rutas:** React Router Dom v6
 
-### `npm start`
+## 🛠️ Configuración Técnica de WebSockets
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+El sistema utiliza **Laravel Echo** con el driver de **Pusher** para gestionar la comunicación bidireccional. La conexión se establece con un servidor de WebSockets autohospedado (Laravel WebSockets).
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Configuración en `src/components/lib/Lib.js`:
 
-### `npm test`
+```javascript
+export const ECHO = new Echo({
+    broadcaster: process.env.REACT_APP_BROADCASTER,    
+    key: process.env.REACT_APP_KEY,
+    cluster: process.env.REACT_APP_CLUSTER,
+    authEndpoint: process.env.REACT_APP_AUTH_END_POINT,
+    wsHost: process.env.REACT_APP_WS_HOST,
+    wsPort: process.env.REACT_APP_WS_PORT,
+    wssPort: process.env.REACT_APP_WSS_PORT,
+    forceTLS: true,
+    encrypted: true,
+    auth: {
+        headers: {
+           Authorization: "Bearer " + cookies.get('token'),
+           Accept: "application/json",
+        }
+    },
+});
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Manejo de Eventos en Tiempo Real (`src/components/Home.js`):
 
-### `npm run build`
+El chat escucha eventos en un canal privado basado en el ID del usuario autenticado:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```javascript
+ECHO.private(`new-message.${usuario_id}`)
+    .listen('.NewMessage', (data) => {
+        // Lógica para actualizar el estado de Redux y la UI
+        if (chatAbierto && data.chat_id === chatActual) {
+            actualizarConversacion(data.chat_id);
+        } else {
+            actualizarListaDeChats();
+        }
+    });
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## ⚙️ Variables de Entorno (.env)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Para que la conexión funcione correctamente, deben definirse las siguientes variables:
 
-### `npm run eject`
+```env
+REACT_APP_URL_API=https://api-alp.jlssystem.com/api/
+REACT_APP_BROADCASTER=pusher
+REACT_APP_KEY=141115
+REACT_APP_WS_HOST=wss.jlssystem.com
+REACT_APP_WS_PORT=6001
+REACT_APP_WSS_PORT=6001
+REACT_APP_AUTH_END_POINT=https://api-alp.jlssystem.com/api/broadcasting/auth
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## 📂 Estructura del Proyecto
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- `/src/features/`: Slices de Redux (auth, chat, conversation).
+- `/src/components/layout/`: Componentes de la interfaz (Sidebar, Chat, Footer).
+- `/src/components/helpers/`: Lógica de negocio y llamadas a la API.
+- `/src/components/lib/`: Configuración centralizada (ECHO, Axios, Cookies).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## 🏃‍♂️ Instalación y Ejecución
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+1. Clonar el repositorio.
+2. Instalar dependencias: `npm install`.
+3. Configurar el archivo `.env` con las credenciales del servidor WebSocket.
+4. Iniciar la aplicación: `npm start`.
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+*Desarrollado para la gestión de soporte al cliente en tiempo real.*
